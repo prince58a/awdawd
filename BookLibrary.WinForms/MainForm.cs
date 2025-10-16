@@ -11,93 +11,27 @@ namespace BookLibrary.WinForms
     {
         private BookLogic logic;
         private BookRepository repository;
-        private FileSystemWatcher fileWatcher;
+        private WatcherClient watcher;
 
         public MainForm()
         {
+            InitializeComponent();
             repository = RepositoryManager.GetRepository();
             logic = new BookLogic(repository);
 
-            InitializeComponent();
+            // Подключение к Watcher
+            watcher = new WatcherClient();
+            watcher.Connect();
+            watcher.DataChanged += (s, e) =>
+            {
+                if (InvokeRequired)
+                    Invoke(new Action(LoadBooks));
+                else
+                    LoadBooks();
+            };
+
             this.MinimumSize = new Size(800, 540);
-
-            repository.DataChanged += Repository_DataChanged;
-            SetupFileWatcher();
             LoadBooks();
-        }
-
-        private void SetupFileWatcher()
-        {
-            try
-            {
-                string dataFilePath = @"C:\Users\egorg\Documents\sem3lab1\books_data.json";
-                string directory = Path.GetDirectoryName(dataFilePath);
-                string fileName = Path.GetFileName(dataFilePath);
-
-                fileWatcher = new FileSystemWatcher();
-                fileWatcher.Path = directory;
-                fileWatcher.Filter = fileName;
-                fileWatcher.NotifyFilter = NotifyFilters.LastWrite;
-                fileWatcher.Changed += OnDataFileChanged;
-                fileWatcher.EnableRaisingEvents = true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ошибка настройки FileSystemWatcher: {ex.Message}");
-            }
-        }
-
-        private void OnDataFileChanged(object sender, FileSystemEventArgs e)
-        {
-            // Пробуем несколько раз, так как файл может быть заблокирован
-            for (int i = 0; i < 3; i++)
-            {
-                try
-                {
-                    Thread.Sleep(100);
-
-                    if (this.InvokeRequired)
-                    {
-                        this.Invoke(new Action(() =>
-                        {
-                            LoadBooks();
-                            Console.WriteLine($"[WinForms] Данные обновлены: {DateTime.Now:HH:mm:ss}");
-                        }));
-                    }
-                    else
-                    {
-                        LoadBooks();
-                    }
-                    break; // Если успешно, выходим из цикла
-                }
-                catch (Exception ex)
-                {
-                    if (i == 2) // Последняя попытка
-                    {
-                        Console.WriteLine($"[WinForms] Ошибка обновления: {ex.Message}");
-                    }
-                    Thread.Sleep(50);
-                }
-            }
-        }
-        
-        private void Repository_DataChanged(object sender, EventArgs e)
-        {
-            if (this.InvokeRequired)
-            {
-                this.Invoke(new Action(LoadBooks));
-            }
-            else
-            {
-                LoadBooks();
-            }
-        }
-
-        protected override void OnFormClosed(FormClosedEventArgs e)
-        {
-            base.OnFormClosed(e);
-            repository.DataChanged -= Repository_DataChanged;
-            fileWatcher?.Dispose();
         }
 
         private void LoadBooks()
@@ -119,7 +53,7 @@ namespace BookLibrary.WinForms
                 {
                     MessageBox.Show(result.Message);
                 }
-                // Данные автоматически сохранятся в файл и обновятся благодаря событию
+                watcher.NotifyChange();
             }
         }
 
@@ -136,7 +70,7 @@ namespace BookLibrary.WinForms
             if (form.ShowDialog() == DialogResult.OK)
             {
                 logic.UpdateBook(book.Id, form.BookTitle, form.BookAuthor, form.BookYear, form.BookGenre);
-                // Данные автоматически сохранятся в файл и обновятся
+                watcher.NotifyChange();
             }
         }
 
@@ -153,7 +87,7 @@ namespace BookLibrary.WinForms
                 MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 logic.DeleteBook(book.Id);
-                // Данные автоматически сохранятся в файл и обновятся
+                watcher.NotifyChange();
             }
         }
 
@@ -217,7 +151,7 @@ namespace BookLibrary.WinForms
             }
 
             var result = string.Join("\n", books.Select(b => b.ToString()));
-            MessageBox.Show(result, $"Книги вышедшие после {year} года");
+            MessageBox.Show(result, $"Книги после {year} года");
         }
 
         private void LoadAuthors()

@@ -9,29 +9,33 @@ namespace BookLibrary.Core
     public class BookRepository
     {
         private readonly string dataFilePath;
+        private readonly object fileLock = new object();
 
         public event EventHandler DataChanged;
 
         public BookRepository()
         {
-            string projectRoot = @"C:\Users\egorg\Documents\sem3lab1";
+            string projectRoot = @"C:\Users\egorg\Documents\GitHub\awdawd";
             dataFilePath = Path.Combine(projectRoot, "books_data.json");
         }
 
         private List<Book> LoadBooksFromFile()
         {
-            if (File.Exists(dataFilePath))
+            lock (fileLock)
             {
-                try
+                if (File.Exists(dataFilePath))
                 {
-                    var json = File.ReadAllText(dataFilePath);
-                    var loadedBooks = JsonSerializer.Deserialize<List<Book>>(json);
-                    return loadedBooks ?? new List<Book>();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Ошибка загрузки данных: {ex.Message}");
-                    return new List<Book>();
+                    try
+                    {
+                        var json = File.ReadAllText(dataFilePath);
+                        var loadedBooks = JsonSerializer.Deserialize<List<Book>>(json);
+                        return loadedBooks ?? new List<Book>();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($" Ошибка загрузки данных: {ex.Message}");
+                        return new List<Book>();
+                    }
                 }
             }
             return new List<Book>();
@@ -39,18 +43,21 @@ namespace BookLibrary.Core
 
         private void SaveBooksToFile(List<Book> books)
         {
-            try
+            lock (fileLock)
             {
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                var json = JsonSerializer.Serialize(books, options);
-                File.WriteAllText(dataFilePath, json);
+                try
+                {
+                    var options = new JsonSerializerOptions { WriteIndented = true };
+                    var json = JsonSerializer.Serialize(books, options);
+                    File.WriteAllText(dataFilePath, json);
 
-                // Уведомляем об изменении
-                OnDataChanged();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ошибка сохранения данных: {ex.Message}");
+                    // Уведомляем об изменении
+                    OnDataChanged();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"❌ Ошибка сохранения данных: {ex.Message}");
+                }
             }
         }
 

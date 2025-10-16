@@ -8,7 +8,7 @@ namespace BookLibrary.Launcher
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("=== ЛАУНЧЕР БИБЛИОТЕКИ ===");
+            Console.WriteLine("=========== ЛАУНЧЕР БИБЛИОТЕКИ ===========");
             Console.WriteLine("1. Запустить только консольное приложение");
             Console.WriteLine("2. Запустить только WinForms приложение");
             Console.WriteLine("3. Запустить оба приложения");
@@ -38,14 +38,14 @@ namespace BookLibrary.Launcher
 
         static void StartConsoleApp()
         {
-            StartAppInNewWindow("BookLibrary.ConsoleApp", "📚 Консольная Библиотека");
+            StartAppInNewWindow("BookLibrary.ConsoleApp", "Консольная Библиотека");
             Console.WriteLine("Нажмите любую клавишу для возврата в лаунчер...");
             Console.ReadKey();
         }
 
         static void StartWinFormsApp()
         {
-            StartAppInNewWindow("BookLibrary.WinForms", "📚 WinForms Библиотека");
+            StartAppInNewWindow("BookLibrary.WinForms", "WinForms Библиотека");
             Console.WriteLine("Нажмите любую клавишу для возврата в лаунчер...");
             Console.ReadKey();
         }
@@ -58,17 +58,14 @@ namespace BookLibrary.Launcher
 
                 Console.WriteLine("Поиск и запуск проектов...");
 
-                // Запускаем консольное приложение
-                StartAppInNewWindow("BookLibrary.ConsoleApp", "📚 Консольная Библиотека");
+                StartAppInNewWindow("BookLibrary.ConsoleApp", "Консольная Библиотека");
 
-                // Ждем
-                Thread.Sleep(3000);
+                Thread.Sleep(2000);
 
-                // Запускаем WinForms приложение
-                StartAppInNewWindow("BookLibrary.WinForms", "📚 WinForms Библиотека");
+                StartAppInNewWindow("BookLibrary.WinForms", "WinForms Библиотека");
 
-                Console.WriteLine("✅ Оба приложения запущены!");
-                Console.WriteLine("⚠️  Лаунчер можно закрыть - приложения работают независимо");
+                Console.WriteLine("Оба приложения запущены!");
+                Console.WriteLine("Лаунчер можно закрыть - приложения работают независимо");
                 Console.WriteLine("Нажмите любую клавишу для закрытия этого окна...");
                 Console.ReadKey();
             }
@@ -85,8 +82,8 @@ namespace BookLibrary.Launcher
             {
                 Console.WriteLine($"Запуск {projectName}...");
 
-                // Абсолютный путь к репозиторию
-                string solutionDir = @"C:\Users\egorg\Documents\sem3lab1";
+                // Вставь сюда свой к репозиторию
+                string solutionDir = @"C:\Users\egorg\Documents\GitHub\awdawd";
                 string projectPath = Path.Combine(solutionDir, projectName, $"{projectName}.csproj");
 
                 if (!File.Exists(projectPath))
@@ -110,11 +107,11 @@ namespace BookLibrary.Launcher
                 };
 
                 process.Start();
-                Console.WriteLine($"✅ {projectName} запущен");
+                Console.WriteLine($"{projectName} запущен");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Ошибка запуска {projectName}: {ex.Message}");
+                Console.WriteLine($"Ошибка запуска {projectName}: {ex.Message}");
             }
         }
     }

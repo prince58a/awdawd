@@ -11,13 +11,20 @@ namespace BookLibrary.ConsoleApp
     {
         private static BookLogic logic;
         private static BookRepository repository;
-        private static FileSystemWatcher fileWatcher;
-        private static bool dataChanged = false;
+        private static WatcherClient watcher;
 
         static void Main(string[] args)
         {
             repository = RepositoryManager.GetRepository();
             logic = new BookLogic(repository);
+
+            watcher = new WatcherClient();
+            watcher.Connect();
+            watcher.DataChanged += (s, e) =>
+            {
+                Console.WriteLine("\n[Watcher] Обнаружено внешнее изменение данных!");
+                RefreshData();
+            };
 
             while (true)
             {
@@ -54,51 +61,15 @@ namespace BookLibrary.ConsoleApp
             }
         }
 
-        private static void SetupFileWatcher()
-        {
-            try
-            {
-                string dataFilePath = @"C:\Users\egorg\Documents\sem3lab1\books_data.json";
-                string directory = Path.GetDirectoryName(dataFilePath);
-                string fileName = Path.GetFileName(dataFilePath);
-
-                fileWatcher = new FileSystemWatcher();
-                fileWatcher.Path = directory;
-                fileWatcher.Filter = fileName;
-                fileWatcher.NotifyFilter = NotifyFilters.LastWrite;
-                fileWatcher.Changed += OnDataFileChanged;
-                fileWatcher.EnableRaisingEvents = true;
-
-                Console.WriteLine($"Отслеживание файла: {dataFilePath}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ошибка настройки FileSystemWatcher: {ex.Message}");
-            }
-        }
-
-        private static void OnDataFileChanged(object sender, FileSystemEventArgs e)
-        {
-            // Добавляем задержку, чтобы файл был доступен для чтения
-            Thread.Sleep(100);
-
-            dataChanged = true;
-            Console.WriteLine($"\n[СИСТЕМА] Файл данных изменен: {DateTime.Now:HH:mm:ss}");
-        }
-
         private static void RefreshData()
         {
-            // Принудительно перезагружаем данные
-            var newRepository = new BookRepository();
-            logic = new BookLogic(newRepository);
-            repository = newRepository;
-            Console.WriteLine("Данные обновлены!");
+            RepositoryManager.ResetRepository();
+            repository = RepositoryManager.GetRepository();
+            logic = new BookLogic(repository);
         }
 
-        // Остальные методы остаются без изменений
         private static void ShowAllBooks()
         {
-            // Всегда читаем свежие данные из файла
             var books = logic.GetAllBooks();
             if (books.Count == 0)
             {
@@ -139,6 +110,8 @@ namespace BookLibrary.ConsoleApp
 
             var result = logic.CreateBook(title, author, year, genre);
             Console.WriteLine(result.Message);
+
+            watcher.NotifyChange(); // уведомляем Watcher
         }
 
         private static string SelectGenre()
@@ -204,6 +177,7 @@ namespace BookLibrary.ConsoleApp
             if (logic.UpdateBook(id, title, author, year, genre))
             {
                 Console.WriteLine("Книга обновлена!");
+                watcher.NotifyChange(); // уведомляем Watcher
             }
             else
             {
@@ -223,6 +197,7 @@ namespace BookLibrary.ConsoleApp
             if (logic.DeleteBook(id))
             {
                 Console.WriteLine("Книга удалена!");
+                watcher.NotifyChange(); // уведомляем Watcher
             }
             else
             {
@@ -303,7 +278,26 @@ namespace BookLibrary.ConsoleApp
 
         private static void Exit()
         {
-            fileWatcher?.Dispose();
+            string[][] frames = {
+                new string[] { "Сохранение.", "           _.,._", "        ,d$$$$$SSIi.", "      ,$$$SSSS$$SSIi:.", "     j$$$$SSSS$$$SIIi·.", "     S$$$$SS$$$$$SSIi·.", "    j?*`‾`?S$SI7”`“?IL:.", "    ?:     $$S?     `?i’", "    iL    j$?$L      I7", "    $$$b%d$’  `$b,__d$:", "    ?SSIiS?    S$?I?$SI", "     ‾`?IS$L_,d$SIi:`^’", "        ?$$$SS$SIi’", "        j:?i:i?·•:", "        ”` `^" },
+                new string[] { "Сохранение..", "           _.,,._", "        ,d$$$$$SSIi:", "      ,$$$SSSS$$$S$Ii::", "     d$$$$SSSS$$$$SSiiI:.", "    j$$$$SS$$$$$SSSi:iII:.", "   j°`^?SSI7°”^?IL:iiISIi:", "   ?   :$I?     ?$:iIS$I:·", "  jL _,$?$L     j7b:iISi:", "  ?$d$’  `$b,_,d$$$:iIi?", "  i$$:    S$?I?$$$S%u.?’", "   ‾?L_,d$SIi:`^?S?^` ’", "    I$$$S$$SIi’", "    :i?i:i?·i·", "        ”` `^" },
+                new string[] { "Сохранение...", "          _.,,._", "      ,dS$$$$$SSii:,", "   ,dS$S$$$$$$$$$$SIi:,", "  dIS$$$$$$$$$$$$$$SSSik", " jIS$$$$$$$$$$$$$$$$SIiiL", "·IIS$$$$$S$$$$$$$$$$SI:?$", ":iS$$$$$$7S$$$$SS$$SIii:?k", ":iS$$$$$7jIS$$$$SS$SIS::·?", "·iIS$$S7j$SI?S$$$SSii7 · L", " :iS$SSi$$$SL`?S$SIi?_.o$$", "  ?ISi7 `°^?Sb,`^°’‾`  _`”", "   ”?°’··:::·`?S$i’    :", "           ··  `?’", "" }
+            };
+
+            int currentFrame = 0;
+            for (int i = 0; i < 30; i++)
+            {
+                Console.Clear();
+                foreach (string line in frames[currentFrame])
+                {
+                    Console.WriteLine(line);
+                }
+                currentFrame = (currentFrame + 1) % frames.Length;
+                Thread.Sleep(120);
+            }
+            Console.Clear();
+            Console.WriteLine("До скорой встречи!");
+            Thread.Sleep(800);
             Environment.Exit(0);
         }
     }
