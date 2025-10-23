@@ -16,7 +16,7 @@ namespace BookLibrary.Core
             try
             {
                 client = new TcpClient(host, port);
-                Console.WriteLine("✅ Подключено к Watcher");
+                Console.WriteLine("Подключено к Watcher");
 
                 listenThread = new Thread(Listen);
                 listenThread.IsBackground = true;
@@ -24,7 +24,7 @@ namespace BookLibrary.Core
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"⚠️ Ошибка подключения к Watcher: {ex.Message}");
+                Console.WriteLine($"Ошибка подключения к Watcher: {ex.Message}");
             }
         }
 
