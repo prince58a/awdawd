@@ -31,9 +31,9 @@ namespace BookLibrary.Core
                 return (false, null, "Книга с такими параметрами уже существует!");
             }
 
-            if (year > DateTime.Now.Year || year < 1000)
+            if (year > DateTime.Now.Year)
             {
-                return (false, null, $"Год должен быть между 1000 и {DateTime.Now.Year}!");
+                return (false, null, $"Год должен быть меньше {DateTime.Now.Year}!");
             }
 
             var book = new Book(0, title, author, year, genre);

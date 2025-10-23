@@ -89,13 +89,11 @@ namespace BookLibrary.ConsoleApp
             Console.WriteLine("\n=== ДОБАВЛЕНИЕ КНИГИ ===");
 
             Console.Write("Название: ");
-            var title = "Названия нет";
-            title = Console.ReadLine();
+            var title = Console.ReadLine();
 
             Console.Write("Автор: ");
 
-            var author = "Автора нет";
-            author = Console.ReadLine();
+            var author = Console.ReadLine();
 
             int year;
             while (true)
