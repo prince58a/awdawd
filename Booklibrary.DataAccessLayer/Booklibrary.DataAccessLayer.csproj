@@ -63,7 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="DataAccessLayer.cs" />
     <Compile Include="DapperRepository.cs" />
     <Compile Include="EntityRepository.cs" />
     <Compile Include="LibraryDbContext.cs" />

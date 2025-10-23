@@ -15,7 +15,10 @@ namespace BookLibrary.Core
 
         public BookRepository()
         {
-            string projectRoot = @"C:\Users\egorg\Documents\GitHub\awdawd";
+            //поменять путь
+            //пк дима C:\Users\dshel\Документы\awdawd
+            //ноут егор C:\Users\egorg\Documents\GitHub\awdawd
+            string projectRoot = @"C:\Users\dshel\Документы\awdawd";
             dataFilePath = Path.Combine(projectRoot, "books_data.json");
         }
 
@@ -33,7 +36,7 @@ namespace BookLibrary.Core
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($" Ошибка загрузки данных: {ex.Message}");
+                        Console.WriteLine($"Ошибка загрузки данных: {ex.Message}");
                         return new List<Book>();
                     }
                 }
@@ -56,7 +59,7 @@ namespace BookLibrary.Core
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"❌ Ошибка сохранения данных: {ex.Message}");
+                    Console.WriteLine($"Ошибка сохранения данных: {ex.Message}");
                 }
             }
         }

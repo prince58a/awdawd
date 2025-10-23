@@ -83,7 +83,9 @@ namespace BookLibrary.Launcher
                 Console.WriteLine($"Запуск {projectName}...");
 
                 // Вставь сюда свой к репозиторию
-                string solutionDir = @"C:\Users\egorg\Documents\GitHub\awdawd";
+                //пк дима C:\Users\dshel\Документы\awdawd
+                //ноут егор C:\Users\egorg\Documents\GitHub\awdawd
+                string solutionDir = @"C:\Users\dshel\Документы\awdawd";
                 string projectPath = Path.Combine(solutionDir, projectName, $"{projectName}.csproj");
 
                 if (!File.Exists(projectPath))

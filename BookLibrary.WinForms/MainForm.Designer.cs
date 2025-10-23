@@ -52,37 +52,32 @@
             label3 = new Label();
             pictureBox1 = new PictureBox();
             label4 = new Label();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            SuspendLayout();
-
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
-            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            toolStripStatusLabel1.Text = "Готово";
-
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            statusStrip1.SuspendLayout();
+            SuspendLayout();
             // 
             // dataGridView1
             // 
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(14, 16);
-            dataGridView1.Margin = new Padding(3, 4, 3, 4);
+            dataGridView1.Location = new Point(12, 12);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.RowHeadersVisible = false;
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new Size(869, 400);
+            dataGridView1.Size = new Size(760, 300);
             dataGridView1.TabIndex = 0;
             // 
             // add
             // 
-            add.Location = new Point(343, 600);
-            add.Margin = new Padding(3, 4, 3, 4);
+            add.Location = new Point(300, 450);
             add.Name = "add";
-            add.Size = new Size(137, 53);
+            add.Size = new Size(120, 40);
             add.TabIndex = 8;
             add.Text = "Добавить";
             add.UseVisualStyleBackColor = true;
@@ -90,10 +85,9 @@
             // 
             // del
             // 
-            del.Location = new Point(617, 600);
-            del.Margin = new Padding(3, 4, 3, 4);
+            del.Location = new Point(540, 450);
             del.Name = "del";
-            del.Size = new Size(137, 53);
+            del.Size = new Size(120, 40);
             del.TabIndex = 10;
             del.Text = "Удалить";
             del.UseVisualStyleBackColor = true;
@@ -101,10 +95,9 @@
             // 
             // edit
             // 
-            edit.Location = new Point(480, 600);
-            edit.Margin = new Padding(3, 4, 3, 4);
+            edit.Location = new Point(420, 450);
             edit.Name = "edit";
-            edit.Size = new Size(137, 53);
+            edit.Size = new Size(120, 40);
             edit.TabIndex = 9;
             edit.Text = "Редактировать";
             edit.UseVisualStyleBackColor = true;
@@ -112,10 +105,9 @@
             // 
             // author
             // 
-            author.Location = new Point(343, 467);
-            author.Margin = new Padding(3, 4, 3, 4);
+            author.Location = new Point(300, 350);
             author.Name = "author";
-            author.Size = new Size(137, 47);
+            author.Size = new Size(120, 35);
             author.TabIndex = 4;
             author.Text = "По автору";
             author.UseVisualStyleBackColor = true;
@@ -123,10 +115,9 @@
             // 
             // genre
             // 
-            genre.Location = new Point(480, 467);
-            genre.Margin = new Padding(3, 4, 3, 4);
+            genre.Location = new Point(420, 350);
             genre.Name = "genre";
-            genre.Size = new Size(137, 47);
+            genre.Size = new Size(120, 35);
             genre.TabIndex = 5;
             genre.Text = "По жанру";
             genre.UseVisualStyleBackColor = true;
@@ -134,10 +125,9 @@
             // 
             // year
             // 
-            year.Location = new Point(617, 467);
-            year.Margin = new Padding(3, 4, 3, 4);
+            year.Location = new Point(540, 350);
             year.Name = "year";
-            year.Size = new Size(137, 47);
+            year.Size = new Size(120, 35);
             year.TabIndex = 6;
             year.Text = "С года";
             year.UseVisualStyleBackColor = true;
@@ -147,46 +137,41 @@
             // 
             AuthorSearchComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             AuthorSearchComboBox.FormattingEnabled = true;
-            AuthorSearchComboBox.Location = new Point(343, 520);
-            AuthorSearchComboBox.Margin = new Padding(3, 4, 3, 4);
+            AuthorSearchComboBox.Location = new Point(300, 390);
             AuthorSearchComboBox.Name = "AuthorSearchComboBox";
-            AuthorSearchComboBox.Size = new Size(137, 28);
+            AuthorSearchComboBox.Size = new Size(120, 23);
             AuthorSearchComboBox.TabIndex = 11;
             // 
             // GenereSearchComboBox
             // 
             GenereSearchComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             GenereSearchComboBox.FormattingEnabled = true;
-            GenereSearchComboBox.Location = new Point(480, 520);
-            GenereSearchComboBox.Margin = new Padding(3, 4, 3, 4);
+            GenereSearchComboBox.Location = new Point(420, 390);
             GenereSearchComboBox.Name = "GenereSearchComboBox";
-            GenereSearchComboBox.Size = new Size(137, 28);
+            GenereSearchComboBox.Size = new Size(120, 23);
             GenereSearchComboBox.TabIndex = 12;
             // 
             // YearSearchComboBox
             // 
             YearSearchComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             YearSearchComboBox.FormattingEnabled = true;
-            YearSearchComboBox.Location = new Point(617, 520);
-            YearSearchComboBox.Margin = new Padding(3, 4, 3, 4);
+            YearSearchComboBox.Location = new Point(540, 390);
             YearSearchComboBox.Name = "YearSearchComboBox";
-            YearSearchComboBox.Size = new Size(137, 28);
+            YearSearchComboBox.Size = new Size(120, 23);
             YearSearchComboBox.TabIndex = 13;
             // 
             // idSearchTextBox
             // 
-            idSearchTextBox.Location = new Point(23, 467);
-            idSearchTextBox.Margin = new Padding(3, 4, 3, 4);
+            idSearchTextBox.Location = new Point(20, 350);
             idSearchTextBox.Name = "idSearchTextBox";
-            idSearchTextBox.Size = new Size(171, 27);
+            idSearchTextBox.Size = new Size(150, 23);
             idSearchTextBox.TabIndex = 1;
             // 
             // searchByIdButton
             // 
-            searchByIdButton.Location = new Point(23, 507);
-            searchByIdButton.Margin = new Padding(3, 4, 3, 4);
+            searchByIdButton.Location = new Point(20, 380);
             searchByIdButton.Name = "searchByIdButton";
-            searchByIdButton.Size = new Size(80, 33);
+            searchByIdButton.Size = new Size(70, 25);
             searchByIdButton.TabIndex = 2;
             searchByIdButton.Text = "Поиск";
             searchByIdButton.UseVisualStyleBackColor = true;
@@ -194,12 +179,11 @@
             // 
             // resetSearchButton
             // 
-            resetSearchButton.Location = new Point(114, 507);
-            resetSearchButton.Margin = new Padding(3, 4, 3, 4);
+            resetSearchButton.Location = new Point(100, 380);
             resetSearchButton.Name = "resetSearchButton";
-            resetSearchButton.Size = new Size(80, 33);
+            resetSearchButton.Size = new Size(70, 25);
             resetSearchButton.TabIndex = 3;
-            resetSearchButton.Text = "Сброс";
+            resetSearchButton.Text = "Обновить";
             resetSearchButton.UseVisualStyleBackColor = true;
             resetSearchButton.Click += btnResetSearch_Click;
             // 
@@ -207,9 +191,9 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            label1.Location = new Point(343, 440);
+            label1.Location = new Point(300, 330);
             label1.Name = "label1";
-            label1.Size = new Size(110, 23);
+            label1.Size = new Size(93, 19);
             label1.TabIndex = 14;
             label1.Text = "Поиск книг:";
             // 
@@ -217,9 +201,9 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            label2.Location = new Point(23, 440);
+            label2.Location = new Point(20, 330);
             label2.Name = "label2";
-            label2.Size = new Size(115, 23);
+            label2.Size = new Size(97, 19);
             label2.TabIndex = 15;
             label2.Text = "Поиск по ID:";
             // 
@@ -227,19 +211,18 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            label3.Location = new Point(343, 573);
+            label3.Location = new Point(300, 430);
             label3.Name = "label3";
-            label3.Size = new Size(190, 23);
+            label3.Size = new Size(162, 19);
             label3.TabIndex = 16;
             label3.Text = "Управление книгами:";
             // 
             // pictureBox1
             // 
             pictureBox1.Image = Properties.Resources.jhoe;
-            pictureBox1.Location = new Point(480, 670);
-            pictureBox1.Margin = new Padding(3, 4, 3, 4);
+            pictureBox1.Location = new Point(420, 502);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(402, 204);
+            pictureBox1.Size = new Size(352, 153);
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox1.TabIndex = 17;
             pictureBox1.TabStop = false;
@@ -248,17 +231,32 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 16F);
-            label4.Location = new Point(46, 733);
+            label4.Location = new Point(40, 550);
             label4.Name = "label4";
-            label4.Size = new Size(393, 37);
+            label4.Size = new Size(322, 30);
             label4.TabIndex = 18;
             label4.Text = "Какой же он крутой, я не могу";
             // 
+            // statusStrip1
+            // 
+            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
+            statusStrip1.Location = new Point(0, 475);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Padding = new Padding(1, 0, 12, 0);
+            statusStrip1.Size = new Size(784, 22);
+            statusStrip1.TabIndex = 19;
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new Size(45, 17);
+            toolStripStatusLabel1.Text = "Готово";
+            // 
             // MainForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(894, 663);
+            ClientSize = new Size(784, 497);
             Controls.Add(label4);
             Controls.Add(pictureBox1);
             Controls.Add(label3);
@@ -277,15 +275,16 @@
             Controls.Add(del);
             Controls.Add(add);
             Controls.Add(dataGridView1);
-            this.Controls.Add(this.statusStrip1);
-            Margin = new Padding(3, 4, 3, 4);
-            MaximumSize = new Size(912, 918);
-            MinimumSize = new Size(912, 550);
+            Controls.Add(statusStrip1);
+            MaximumSize = new Size(800, 698);
+            MinimumSize = new Size(800, 422);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Библиотека книг";
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            statusStrip1.ResumeLayout(false);
+            statusStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }

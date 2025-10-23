@@ -1,4 +1,4 @@
-﻿using BookLibrary.Core;
+﻿ using BookLibrary.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -89,10 +89,13 @@ namespace BookLibrary.ConsoleApp
             Console.WriteLine("\n=== ДОБАВЛЕНИЕ КНИГИ ===");
 
             Console.Write("Название: ");
-            var title = Console.ReadLine();
+            var title = "Названия нет";
+            title = Console.ReadLine();
 
             Console.Write("Автор: ");
-            var author = Console.ReadLine();
+
+            var author = "Автора нет";
+            author = Console.ReadLine();
 
             int year;
             while (true)
@@ -107,7 +110,7 @@ namespace BookLibrary.ConsoleApp
             }
 
             string genre = SelectGenre();
-
+            
             var result = logic.CreateBook(title, author, year, genre);
             Console.WriteLine(result.Message);
 
