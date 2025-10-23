@@ -8,6 +8,7 @@
         public int Year { get; set; }
         public string Genre { get; set; }
 
+        public int id { get; set; }
         public Book() { }
 
         public Book(int id, string title, string author, int year, string genre)
