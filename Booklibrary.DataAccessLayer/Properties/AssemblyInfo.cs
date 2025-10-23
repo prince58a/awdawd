@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Общие сведения об этой сборке предоставляются следующим набором
 // набора атрибутов. Измените значения этих атрибутов для изменения сведений,
 // связанные со сборкой.
-[assembly: AssemblyTitle("Booklibrary.DataAccessLayer")]
+[assembly: AssemblyTitle("BookLibrary.DataAccessLayer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Booklibrary.DataAccessLayer")]
+[assembly: AssemblyProduct("BookLibrary.DataAccessLayer")]
 [assembly: AssemblyCopyright("Copyright ©  2025")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Следующий GUID служит для идентификации библиотеки типов, если этот проект будет видимым для COM
-[assembly: Guid("e23560e4-09a7-4253-9dc9-b6ade679baef")]
+[assembly: Guid("6bc172a5-99db-4d33-ad9f-4688c335d8c2")]
 
 // Сведения о версии сборки состоят из указанных ниже четырех значений:
 //
