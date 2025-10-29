@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLibrary.Core", "BookLib
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLibrary.WinForms", "BookLibrary.WinForms\BookLibrary.WinForms.csproj", "{2FAEC361-FF82-4605-B1C6-083E30F28684}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLibrary.DataAccessLayer", "BookLibrary.DataAccessLayer\BookLibrary.DataAccessLayer.csproj", "{54114A7A-EB4A-440D-8473-9875691FC83E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{2FAEC361-FF82-4605-B1C6-083E30F28684}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FAEC361-FF82-4605-B1C6-083E30F28684}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FAEC361-FF82-4605-B1C6-083E30F28684}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54114A7A-EB4A-440D-8473-9875691FC83E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54114A7A-EB4A-440D-8473-9875691FC83E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54114A7A-EB4A-440D-8473-9875691FC83E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54114A7A-EB4A-440D-8473-9875691FC83E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

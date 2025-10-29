@@ -1,4 +1,6 @@
 ﻿using BookLibrary.Core;
+using BookLibrary.DataAccessLayer;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,42 +12,42 @@ namespace BookLibrary.WinForms
     public partial class MainForm : Form
     {
         private BookLogic logic;
-        private BookRepository repository;
-        private FileSystemWatcher fileWatcher;
 
         public MainForm()
         {
-            repository = RepositoryManager.GetRepository();
+            var repository = CreateRepository("Dapper"); // "Dapper" или "EF"
             logic = new BookLogic(repository);
 
             InitializeComponent();
-            this.MinimumSize = new Size(800, 540);
-
-            repository.DataChanged += Repository_DataChanged;
-            SetupFileWatcher();
             LoadBooks();
         }
 
-        private void SetupFileWatcher()
+        private static IRepository<Book> CreateRepository(string repositoryType)
         {
-            try
-            {
-                string dataFilePath = @"C:\Users\dshel\Документы\awdawd\books_data.json";
-                string directory = Path.GetDirectoryName(dataFilePath);
-                string fileName = Path.GetFileName(dataFilePath);
+            // Создаем папку для данных если не существует
+            var dataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BookLibrary");
+            Directory.CreateDirectory(dataFolder);
 
-                fileWatcher = new FileSystemWatcher();
-                fileWatcher.Path = directory;
-                fileWatcher.Filter = fileName;
-                fileWatcher.NotifyFilter = NotifyFilters.LastWrite;
-                fileWatcher.Changed += OnDataFileChanged;
-                fileWatcher.EnableRaisingEvents = true;
-            }
-            catch (Exception ex)
+            var dbPath = Path.Combine(dataFolder, "BookLibrary.db");
+            var connectionString = $"Data Source={dbPath}";
+
+            if (repositoryType == "EF")
             {
-                Console.WriteLine($"Ошибка настройки FileSystemWatcher: {ex.Message}");
+                var context = new BookDbContext(dbPath);
+                return new EntityRepository(context);
+            }
+            else if (repositoryType == "Dapper")
+            {
+                return new DapperRepository(connectionString);
+            }
+            else
+            {
+                throw new ArgumentException("Неизвестный тип репозитория");
             }
         }
+
+
+
 
         private void OnDataFileChanged(object sender, FileSystemEventArgs e)
         {
@@ -96,8 +98,6 @@ namespace BookLibrary.WinForms
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             base.OnFormClosed(e);
-            repository.DataChanged -= Repository_DataChanged;
-            fileWatcher?.Dispose();
         }
 
         private void LoadBooks()

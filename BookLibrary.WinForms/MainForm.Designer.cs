@@ -177,7 +177,7 @@
             resetSearchButton.Name = "resetSearchButton";
             resetSearchButton.Size = new Size(70, 25);
             resetSearchButton.TabIndex = 3;
-            resetSearchButton.Text = "Сброс";
+            resetSearchButton.Text = "Обновить";
             resetSearchButton.UseVisualStyleBackColor = true;
             resetSearchButton.Click += btnResetSearch_Click;
             // 

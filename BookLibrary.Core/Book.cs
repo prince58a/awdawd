@@ -1,6 +1,12 @@
-﻿namespace BookLibrary.Core
+﻿
+namespace BookLibrary.Core
 {
-    public class Book
+    public interface IDomainObject
+    {
+        int Id { get; set; }
+    }
+
+    public class Book : IDomainObject
     {
         public int Id { get; set; }
         public string Title { get; set; }

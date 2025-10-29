@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BookLibrary.Core\BookLibrary.Core.csproj" />
+    <ProjectReference Include="..\BookLibrary.DataAccessLayer\BookLibrary.DataAccessLayer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,22 +1,17 @@
 ﻿using BookLibrary.Core;
+using BookLibrary.DataAccessLayer;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading;
 
 namespace BookLibrary.ConsoleApp
 {
     internal class Program
     {
         private static BookLogic logic;
-        private static BookRepository repository;
-        private static FileSystemWatcher fileWatcher;
-        private static bool dataChanged = false;
 
         static void Main(string[] args)
         {
-            repository = RepositoryManager.GetRepository();
+            var repository = CreateRepository("Dapper"); // "Dapper" или "EF"
             logic = new BookLogic(repository);
 
             while (true)
@@ -45,7 +40,7 @@ namespace BookLibrary.ConsoleApp
                     case "5": SearchByAuthor(); break;
                     case "6": GroupByGenre(); break;
                     case "7": ShowBooksAfterYear(); break;
-                    case "0": Exit(); break;
+                    case "0": Environment.Exit(0); break;
                     default: Console.WriteLine("Неверный выбор!"); break;
                 }
 
@@ -54,51 +49,39 @@ namespace BookLibrary.ConsoleApp
             }
         }
 
-        private static void SetupFileWatcher()
+        private static IRepository<Book> CreateRepository(string repositoryType)
         {
-            try
-            {
-                string dataFilePath = @"C:\Users\dshel\Документы\awdawd\books_data.json";
-                string directory = Path.GetDirectoryName(dataFilePath);
-                string fileName = Path.GetFileName(dataFilePath);
+            // Создаем папку для данных если не существует
+            var dataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BookLibrary");
+            Directory.CreateDirectory(dataFolder);
 
-                fileWatcher = new FileSystemWatcher();
-                fileWatcher.Path = directory;
-                fileWatcher.Filter = fileName;
-                fileWatcher.NotifyFilter = NotifyFilters.LastWrite;
-                fileWatcher.Changed += OnDataFileChanged;
-                fileWatcher.EnableRaisingEvents = true;
+            var dbPath = Path.Combine(dataFolder, "BookLibrary.db");
+            var connectionString = $"Data Source={dbPath}";
 
-                Console.WriteLine($"Отслеживание файла: {dataFilePath}");
-            }
-            catch (Exception ex)
+            Console.WriteLine($"База данных: {dbPath}");
+
+            return repositoryType.ToUpper() switch
             {
-                Console.WriteLine($"Ошибка настройки FileSystemWatcher: {ex.Message}");
-            }
+                "EF" => CreateEntityFrameworkRepository(dbPath),
+                "DAPPER" => CreateDapperRepository(connectionString),
+                _ => CreateEntityFrameworkRepository(dbPath)
+            };
         }
 
-        private static void OnDataFileChanged(object sender, FileSystemEventArgs e)
+        private static IRepository<Book> CreateEntityFrameworkRepository(string dbPath)
         {
-            // Добавляем задержку, чтобы файл был доступен для чтения
-            Thread.Sleep(100);
-
-            dataChanged = true;
-            Console.WriteLine($"\n[СИСТЕМА] Файл данных изменен: {DateTime.Now:HH:mm:ss}");
+            var context = new BookDbContext(dbPath);
+            return new EntityRepository(context);
         }
 
-        private static void RefreshData()
+        private static IRepository<Book> CreateDapperRepository(string connectionString)
         {
-            // Принудительно перезагружаем данные
-            var newRepository = new BookRepository();
-            logic = new BookLogic(newRepository);
-            repository = newRepository;
-            Console.WriteLine("Данные обновлены!");
+            return new DapperRepository(connectionString);
         }
 
         // Остальные методы остаются без изменений
         private static void ShowAllBooks()
         {
-            // Всегда читаем свежие данные из файла
             var books = logic.GetAllBooks();
             if (books.Count == 0)
             {
@@ -299,12 +282,6 @@ namespace BookLibrary.ConsoleApp
             {
                 Console.WriteLine(book);
             }
-        }
-
-        private static void Exit()
-        {
-            fileWatcher?.Dispose();
-            Environment.Exit(0);
         }
     }
 }
