@@ -26,13 +26,11 @@ namespace BookLibrary.DataAccessLayer
                 {
                     connection.Open();
 
-                    // Проверяем, существует ли таблица
                     var tableExists = connection.ExecuteScalar<int>(
                         "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='Books'");
 
                     if (tableExists == 0)
                     {
-                        // Создаем таблицу только если она не существует
                         var createTableSql = @"
                             CREATE TABLE Books (
                                 Id INTEGER PRIMARY KEY AUTOINCREMENT,

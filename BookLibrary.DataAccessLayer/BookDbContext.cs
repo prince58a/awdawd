@@ -35,10 +35,8 @@ namespace BookLibrary.DataAccessLayer
         {
             try
             {
-                // Безопасное создание базы данных и таблиц
                 Database.EnsureCreated();
 
-                // Проверяем, что таблица Books существует и имеет правильную структуру
                 var tableExists = Database.ExecuteSqlRaw(@"
                     SELECT name FROM sqlite_master 
                     WHERE type='table' AND name='Books'");

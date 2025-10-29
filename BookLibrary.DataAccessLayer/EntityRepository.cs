@@ -12,7 +12,6 @@ namespace BookLibrary.DataAccessLayer
         public EntityRepository(BookDbContext context)
         {
             _context = context;
-            // Убрали EnsureCreated() отсюда, будем вызывать явно
         }
 
         public void Add(Book item)

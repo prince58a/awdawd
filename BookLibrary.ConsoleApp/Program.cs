@@ -51,7 +51,6 @@ namespace BookLibrary.ConsoleApp
 
         private static IRepository<Book> CreateRepository(string repositoryType)
         {
-            // Создаем папку для данных если не существует
             var dataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BookLibrary");
             Directory.CreateDirectory(dataFolder);
 
@@ -79,7 +78,6 @@ namespace BookLibrary.ConsoleApp
             return new DapperRepository(connectionString);
         }
 
-        // Остальные методы остаются без изменений
         private static void ShowAllBooks()
         {
             var books = logic.GetAllBooks();

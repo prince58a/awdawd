@@ -24,7 +24,6 @@ namespace BookLibrary.WinForms
 
         private static IRepository<Book> CreateRepository(string repositoryType)
         {
-            // Создаем папку для данных если не существует
             var dataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BookLibrary");
             Directory.CreateDirectory(dataFolder);
 
@@ -51,7 +50,7 @@ namespace BookLibrary.WinForms
 
         private void OnDataFileChanged(object sender, FileSystemEventArgs e)
         {
-            // Пробуем несколько раз, так как файл может быть заблокирован
+            // код пробует несколько раз проверить файл, тк он может быть просто не доступен, хихи хаха, костыль кароче
             for (int i = 0; i < 3; i++)
             {
                 try
@@ -70,11 +69,11 @@ namespace BookLibrary.WinForms
                     {
                         LoadBooks();
                     }
-                    break; // Если успешно, выходим из цикла
+                    break; // чтобы не было лишних телодвижений то закрытие
                 }
                 catch (Exception ex)
                 {
-                    if (i == 2) // Последняя попытка
+                    if (i == 2) // Леди джентльмены, у нас есть последний шанс...
                     {
                         Console.WriteLine($"[WinForms] Ошибка обновления: {ex.Message}");
                     }
@@ -119,7 +118,6 @@ namespace BookLibrary.WinForms
                 {
                     MessageBox.Show(result.Message);
                 }
-                // Данные автоматически сохранятся в файл и обновятся благодаря событию
             }
         }
 
@@ -136,7 +134,6 @@ namespace BookLibrary.WinForms
             if (form.ShowDialog() == DialogResult.OK)
             {
                 logic.UpdateBook(book.Id, form.BookTitle, form.BookAuthor, form.BookYear, form.BookGenre);
-                // Данные автоматически сохранятся в файл и обновятся
             }
         }
 
@@ -153,7 +150,6 @@ namespace BookLibrary.WinForms
                 MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 logic.DeleteBook(book.Id);
-                // Данные автоматически сохранятся в файл и обновятся
             }
         }
 
