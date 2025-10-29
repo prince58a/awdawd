@@ -5,14 +5,9 @@ using BookLibrary.Core;
 
 namespace BookLibrary.DataAccessLayer
 {
-    public class EntityRepository : IRepository<Book>
+    public class EntityRepository(BookDbContext context) : IRepository<Book>
     {
-        private readonly BookDbContext _context;
-
-        public EntityRepository(BookDbContext context)
-        {
-            _context = context;
-        }
+        private readonly BookDbContext _context = context;
 
         public void Add(Book item)
         {
@@ -32,10 +27,7 @@ namespace BookLibrary.DataAccessLayer
             return false;
         }
 
-        public IEnumerable<Book> ReadAll()
-        {
-            return _context.Books.ToList();
-        }
+        public IEnumerable<Book> ReadAll() => [.. _context.Books];
 
         public Book ReadById(int id)
         {

@@ -75,7 +75,7 @@
             add.TabIndex = 8;
             add.Text = "Добавить";
             add.UseVisualStyleBackColor = true;
-            add.Click += btnADD_Click;
+            add.Click += BtnADD_Click;
             // 
             // del
             // 
@@ -85,7 +85,7 @@
             del.TabIndex = 10;
             del.Text = "Удалить";
             del.UseVisualStyleBackColor = true;
-            del.Click += btnDEL_Click;
+            del.Click += BtnDEL_Click;
             // 
             // edit
             // 
@@ -95,7 +95,7 @@
             edit.TabIndex = 9;
             edit.Text = "Редактировать";
             edit.UseVisualStyleBackColor = true;
-            edit.Click += btnEDIT_Click;
+            edit.Click += BtnEDIT_Click;
             // 
             // author
             // 
@@ -105,7 +105,7 @@
             author.TabIndex = 4;
             author.Text = "По автору";
             author.UseVisualStyleBackColor = true;
-            author.Click += btnSORTAuthor_Click;
+            author.Click += BtnSORTAuthor_Click;
             // 
             // genre
             // 
@@ -115,7 +115,7 @@
             genre.TabIndex = 5;
             genre.Text = "По жанру";
             genre.UseVisualStyleBackColor = true;
-            genre.Click += btnSORTGenre_Click;
+            genre.Click += BtnSORTGenre_Click;
             // 
             // year
             // 
@@ -125,7 +125,7 @@
             year.TabIndex = 6;
             year.Text = "С года";
             year.UseVisualStyleBackColor = true;
-            year.Click += btnSORTYear_Click;
+            year.Click += BtnSORTYear_Click;
             // 
             // AuthorSearchComboBox
             // 
@@ -169,7 +169,7 @@
             searchByIdButton.TabIndex = 2;
             searchByIdButton.Text = "Поиск";
             searchByIdButton.UseVisualStyleBackColor = true;
-            searchByIdButton.Click += btnSearchById_Click;
+            searchByIdButton.Click += BtnSearchById_Click;
             // 
             // resetSearchButton
             // 
@@ -179,7 +179,7 @@
             resetSearchButton.TabIndex = 3;
             resetSearchButton.Text = "Обновить";
             resetSearchButton.UseVisualStyleBackColor = true;
-            resetSearchButton.Click += btnResetSearch_Click;
+            resetSearchButton.Click += BtnResetSearch_Click;
             // 
             // label1
             // 

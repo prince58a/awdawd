@@ -1,0 +1,16 @@
+﻿[*.cs]
+
+# CS8618: Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Рассмотрите возможность добавления модификатора "required" или объявления значения, допускающего значение NULL.
+dotnet_diagnostic.CS8618.severity = none
+
+# CS0659: Тип переопределяет Object.Equals(object o), но не переопределяет Object.GetHashCode()
+dotnet_diagnostic.CS0659.severity = none
+
+# CS8619: Допустимость значения NULL для ссылочных типов в значении не соответствует целевому типу.
+dotnet_diagnostic.CS8619.severity = none
+
+# CS8603: Возможно, возврат ссылки, допускающей значение NULL.
+dotnet_diagnostic.CS8603.severity = none
+
+# CS8604: Возможно, аргумент-ссылка, допускающий значение NULL.
+dotnet_diagnostic.CS8604.severity = none

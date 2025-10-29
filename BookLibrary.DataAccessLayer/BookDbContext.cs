@@ -4,14 +4,9 @@ using System;
 
 namespace BookLibrary.DataAccessLayer
 {
-    public class BookDbContext : DbContext
+    public class BookDbContext(string dbPath) : DbContext
     {
-        private readonly string _dbPath;
-
-        public BookDbContext(string dbPath)
-        {
-            _dbPath = dbPath;
-        }
+        private readonly string _dbPath = dbPath;
 
         public DbSet<Book> Books { get; set; }
 

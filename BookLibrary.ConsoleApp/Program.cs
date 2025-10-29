@@ -124,7 +124,7 @@ namespace BookLibrary.ConsoleApp
 
         private static string SelectGenre()
         {
-            var genres = logic.GetAvailableGenres();
+            var genres = BookLogic.GetAvailableGenres();
 
             while (true)
             {

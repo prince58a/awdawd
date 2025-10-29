@@ -22,16 +22,15 @@ namespace BookLibrary.DataAccessLayer
         {
             try
             {
-                using (var connection = new SqliteConnection(_connectionString))
+                using var connection = new SqliteConnection(_connectionString);
+                connection.Open();
+
+                var tableExists = connection.ExecuteScalar<int>(
+                    "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='Books'");
+
+                if (tableExists == 0)
                 {
-                    connection.Open();
-
-                    var tableExists = connection.ExecuteScalar<int>(
-                        "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='Books'");
-
-                    if (tableExists == 0)
-                    {
-                        var createTableSql = @"
+                    var createTableSql = @"
                             CREATE TABLE Books (
                                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 Title TEXT NOT NULL,
@@ -40,13 +39,12 @@ namespace BookLibrary.DataAccessLayer
                                 Genre TEXT NOT NULL
                             )";
 
-                        connection.Execute(createTableSql);
-                        Console.WriteLine("Таблица Books создана успешно");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Таблица Books уже существует");
-                    }
+                    connection.Execute(createTableSql);
+                    Console.WriteLine("Таблица Books создана успешно");
+                }
+                else
+                {
+                    Console.WriteLine("Таблица Books уже существует");
                 }
             }
             catch (Exception ex)
@@ -58,53 +56,43 @@ namespace BookLibrary.DataAccessLayer
 
         public void Add(Book item)
         {
-            using (IDbConnection db = new SqliteConnection(_connectionString))
-            {
-                var sql = @"INSERT INTO Books (Title, Author, Year, Genre) 
+            using IDbConnection db = new SqliteConnection(_connectionString);
+            var sql = @"INSERT INTO Books (Title, Author, Year, Genre) 
                            VALUES (@Title, @Author, @Year, @Genre);
                            SELECT last_insert_rowid();";
 
-                var id = db.Query<int>(sql, item).Single();
-                item.Id = id;
-            }
+            var id = db.Query<int>(sql, item).Single();
+            item.Id = id;
         }
 
         public bool Delete(int id)
         {
-            using (IDbConnection db = new SqliteConnection(_connectionString))
-            {
-                var sql = "DELETE FROM Books WHERE Id = @Id";
-                var affectedRows = db.Execute(sql, new { Id = id });
-                return affectedRows > 0;
-            }
+            using IDbConnection db = new SqliteConnection(_connectionString);
+            var sql = "DELETE FROM Books WHERE Id = @Id";
+            var affectedRows = db.Execute(sql, new { Id = id });
+            return affectedRows > 0;
         }
 
         public IEnumerable<Book> ReadAll()
         {
-            using (IDbConnection db = new SqliteConnection(_connectionString))
-            {
-                return db.Query<Book>("SELECT * FROM Books");
-            }
+            using IDbConnection db = new SqliteConnection(_connectionString);
+            return db.Query<Book>("SELECT * FROM Books");
         }
 
         public Book ReadById(int id)
         {
-            using (IDbConnection db = new SqliteConnection(_connectionString))
-            {
-                return db.QueryFirstOrDefault<Book>("SELECT * FROM Books WHERE Id = @Id", new { Id = id });
-            }
+            using IDbConnection db = new SqliteConnection(_connectionString);
+            return db.QueryFirstOrDefault<Book>("SELECT * FROM Books WHERE Id = @Id", new { Id = id });
         }
 
         public bool Update(Book item)
         {
-            using (IDbConnection db = new SqliteConnection(_connectionString))
-            {
-                var sql = @"UPDATE Books 
+            using IDbConnection db = new SqliteConnection(_connectionString);
+            var sql = @"UPDATE Books 
                            SET Title = @Title, Author = @Author, Year = @Year, Genre = @Genre 
                            WHERE Id = @Id";
-                var affectedRows = db.Execute(sql, item);
-                return affectedRows > 0;
-            }
+            var affectedRows = db.Execute(sql, item);
+            return affectedRows > 0;
         }
     }
 }

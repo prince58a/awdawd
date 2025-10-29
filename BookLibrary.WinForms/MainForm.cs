@@ -11,7 +11,7 @@ namespace BookLibrary.WinForms
 {
     public partial class MainForm : Form
     {
-        private BookLogic logic;
+        private readonly BookLogic logic;
 
         public MainForm()
         {
@@ -108,9 +108,9 @@ namespace BookLibrary.WinForms
             LoadYears();
         }
 
-        private void btnADD_Click(object sender, EventArgs e)
+        private void BtnADD_Click(object sender, EventArgs e)
         {
-            var form = new BookForm(logic.GetAvailableGenres());
+            var form = new BookForm(BookLogic.GetAvailableGenres());
             if (form.ShowDialog() == DialogResult.OK)
             {
                 var result = logic.CreateBook(form.BookTitle, form.BookAuthor, form.BookYear, form.BookGenre);
@@ -121,7 +121,7 @@ namespace BookLibrary.WinForms
             }
         }
 
-        private void btnEDIT_Click(object sender, EventArgs e)
+        private void BtnEDIT_Click(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count == 0)
             {
@@ -130,14 +130,14 @@ namespace BookLibrary.WinForms
             }
 
             var book = (Book)dataGridView1.SelectedRows[0].DataBoundItem;
-            var form = new BookForm(book, logic.GetAvailableGenres());
+            var form = new BookForm(book, BookLogic.GetAvailableGenres());
             if (form.ShowDialog() == DialogResult.OK)
             {
                 logic.UpdateBook(book.Id, form.BookTitle, form.BookAuthor, form.BookYear, form.BookGenre);
             }
         }
 
-        private void btnDEL_Click(object sender, EventArgs e)
+        private void BtnDEL_Click(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count == 0)
             {
@@ -153,7 +153,7 @@ namespace BookLibrary.WinForms
             }
         }
 
-        private void btnSORTGenre_Click(object sender, EventArgs e)
+        private void BtnSORTGenre_Click(object sender, EventArgs e)
         {
             if (GenereSearchComboBox.SelectedItem == null)
             {
@@ -174,7 +174,7 @@ namespace BookLibrary.WinForms
             MessageBox.Show(result, $"Книги жанра {genre}");
         }
 
-        private void btnSORTAuthor_Click(object sender, EventArgs e)
+        private void BtnSORTAuthor_Click(object sender, EventArgs e)
         {
             if (AuthorSearchComboBox.SelectedItem == null)
             {
@@ -195,7 +195,7 @@ namespace BookLibrary.WinForms
             MessageBox.Show(result, $"Книги автора {author}");
         }
 
-        private void btnSORTYear_Click(object sender, EventArgs e)
+        private void BtnSORTYear_Click(object sender, EventArgs e)
         {
             if (YearSearchComboBox.SelectedItem == null)
             {
@@ -255,18 +255,18 @@ namespace BookLibrary.WinForms
                 .ToArray();
 
             YearSearchComboBox.Items.Clear();
-            YearSearchComboBox.Items.AddRange(years.Select(y => (object)y).ToArray());
+            YearSearchComboBox.Items.AddRange([.. years.Select(y => (object)y)]);
 
             if (years.Length > 0)
                 YearSearchComboBox.SelectedIndex = 0;
         }
 
-        private void btnSearchById_Click(object sender, EventArgs e)
+        private void BtnSearchById_Click(object sender, EventArgs e)
         {
             SearchBookById();
         }
 
-        private void btnResetSearch_Click(object sender, EventArgs e)
+        private void BtnResetSearch_Click(object sender, EventArgs e)
         {
             ResetSearch();
         }

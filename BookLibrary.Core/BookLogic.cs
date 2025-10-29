@@ -4,20 +4,15 @@ using System.Linq;
 
 namespace BookLibrary.Core
 {
-    public class BookLogic
+    public class BookLogic(IRepository<Book> repository)
     {
-        private IRepository<Book> _repository;
-        private static readonly string[] AvailableGenres = {
+        private readonly IRepository<Book> _repository = repository;
+        private static readonly string[] AvailableGenres = [
             "Фантастика", "Детектив", "Роман", "Фэнтези", "Ужасы",
             "Приключения", "Научная литература", "Биография", "Поэзия", "Роман-антиутопия"
-        };
+        ];
 
-        public BookLogic(IRepository<Book> repository)
-        {
-            _repository = repository;
-        }
-
-        public string[] GetAvailableGenres() => AvailableGenres;
+        public static string[] GetAvailableGenres() => AvailableGenres;
 
         public (bool Success, Book Book, string Message) CreateBook(string title, string author, int year, string genre)
         {
@@ -45,7 +40,7 @@ namespace BookLibrary.Core
 
         public Book GetBook(int id) => _repository.ReadById(id);
 
-        public List<Book> GetAllBooks() => _repository.ReadAll().ToList();
+        public List<Book> GetAllBooks() => [.. _repository.ReadAll()];
 
         public bool UpdateBook(int id, string title, string author, int year, string genre)
         {
@@ -71,31 +66,28 @@ namespace BookLibrary.Core
 
         public List<Book> GetBooksByAuthor(string author)
         {
-            return _repository.ReadAll()
-                .Where(b => b.Author.Equals(author, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            return [.. _repository.ReadAll().Where(b => b.Author.Equals(author, StringComparison.OrdinalIgnoreCase))];
         }
 
         public List<Book> GetBooksByGenre(string genre)
         {
-            return _repository.ReadAll()
-                .Where(b => b.Genre.Equals(genre, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            return [.. _repository.ReadAll().Where(b => b.Genre.Equals(genre, StringComparison.OrdinalIgnoreCase))];
         }
 
         public Dictionary<string, List<Book>> GroupBooksByGenre()
         {
-            return _repository.ReadAll()
-                .GroupBy(b => b.Genre)
-                .ToDictionary(g => g.Key, g => g.ToList());
+            return _repository.ReadAll().GroupBy(b => b.Genre).ToDictionary(g => g.Key, g => g.ToList());
         }
 
         public List<Book> GetBooksAfterYear(int year)
         {
-            return _repository.ReadAll()
-                .Where(b => b.Year >= year)
-                .OrderBy(b => b.Year)
-                .ToList();
+            return [.. _repository.ReadAll().Where(b => b.Year >= year).OrderBy(b => b.Year)];
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is BookLogic logic &&
+                   EqualityComparer<IRepository<Book>>.Default.Equals(_repository, logic._repository);
         }
     }
 }

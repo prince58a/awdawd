@@ -26,15 +26,15 @@ namespace BookLibrary.Core
                 {
                     var json = File.ReadAllText(dataFilePath);
                     var loadedBooks = JsonSerializer.Deserialize<List<Book>>(json);
-                    return loadedBooks ?? new List<Book>();
+                    return loadedBooks ?? [];
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Ошибка загрузки данных: {ex.Message}");
-                    return new List<Book>();
+                    return [];
                 }
             }
-            return new List<Book>();
+            return [];
         }
 
         private void SaveBooksToFile(List<Book> books)
@@ -45,7 +45,6 @@ namespace BookLibrary.Core
                 var json = JsonSerializer.Serialize(books, options);
                 File.WriteAllText(dataFilePath, json);
 
-                // Уведомляем об изменении
                 OnDataChanged();
             }
             catch (Exception ex)
