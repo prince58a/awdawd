@@ -20,7 +20,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private Button btnRefresh;
 
         protected override void Dispose(bool disposing)
         {
@@ -181,15 +180,6 @@
             resetSearchButton.Text = "Сброс";
             resetSearchButton.UseVisualStyleBackColor = true;
             resetSearchButton.Click += btnResetSearch_Click;
-
-            btnRefresh = new Button();
-            btnRefresh.Location = new Point(180, 450);
-            btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(120, 40);
-            btnRefresh.TabIndex = 17;
-            btnRefresh.Text = "Обновить";
-            btnRefresh.UseVisualStyleBackColor = true;
-            btnRefresh.Click += btnRefresh_Click;
             // 
             // label1
             // 
@@ -245,7 +235,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(784, 661);
+            ClientSize = new Size(784, 496);
             Controls.Add(label4);
             Controls.Add(pictureBox1);
             Controls.Add(label3);
@@ -253,7 +243,6 @@
             Controls.Add(label1);
             Controls.Add(resetSearchButton);
             Controls.Add(searchByIdButton);
-            this.Controls.Add(btnRefresh);
             Controls.Add(idSearchTextBox);
             Controls.Add(YearSearchComboBox);
             Controls.Add(GenereSearchComboBox);
@@ -266,7 +255,7 @@
             Controls.Add(add);
             Controls.Add(dataGridView1);
             MaximumSize = new Size(800, 700);
-            MinimumSize = new Size(800, 550);
+            MinimumSize = new Size(800, 535);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Библиотека книг";

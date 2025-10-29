@@ -58,7 +58,7 @@ namespace BookLibrary.ConsoleApp
         {
             try
             {
-                string dataFilePath = @"C:\Users\egorg\Documents\sem3lab1\books_data.json";
+                string dataFilePath = @"C:\Users\dshel\Документы\awdawd\books_data.json";
                 string directory = Path.GetDirectoryName(dataFilePath);
                 string fileName = Path.GetFileName(dataFilePath);
 

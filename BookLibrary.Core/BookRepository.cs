@@ -14,7 +14,7 @@ namespace BookLibrary.Core
 
         public BookRepository()
         {
-            string projectRoot = @"C:\Users\egorg\Documents\sem3lab1";
+            string projectRoot = @"C:\Users\dshel\Документы\awdawd";
             dataFilePath = Path.Combine(projectRoot, "books_data.json");
         }
 
