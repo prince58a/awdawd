@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Media;
 using System.Windows.Forms;
 
 namespace BookLibrary.WinForms
@@ -12,6 +13,8 @@ namespace BookLibrary.WinForms
     public partial class MainForm : Form
     {
         private readonly BookLogic logic;
+        private SoundPlayer soundPlayer;
+
 
         public MainForm()
         {
@@ -20,6 +23,7 @@ namespace BookLibrary.WinForms
 
             InitializeComponent();
             LoadBooks();
+            InitializeSound();
         }
 
         private static IRepository<Book> CreateRepository(string repositoryType)
@@ -81,7 +85,7 @@ namespace BookLibrary.WinForms
                 }
             }
         }
-        
+
         private void Repository_DataChanged(object sender, EventArgs e)
         {
             if (this.InvokeRequired)
@@ -303,6 +307,44 @@ namespace BookLibrary.WinForms
         {
             idSearchTextBox.Text = "";
             LoadBooks();
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            PlayBackgroundSound();
+
+            OpenGifWindow();
+        }
+
+        private void InitializeSound()
+        {
+            try
+            {
+                soundPlayer = new SoundPlayer(@"C:\Users\Gosha\Documents\GitHub\awdawd\BookLibrary.WinForms\Files\sound.wav");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки звука: {ex.Message}");
+            }
+        }
+
+        private void PlayBackgroundSound()
+        {
+            try
+            {
+                soundPlayer?.Play();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка воспроизведения звука: {ex.Message}");
+            }
+        }
+
+        private void OpenGifWindow()
+        {
+            GifForm gifForm = new GifForm();
+            //gifForm.ShowDialog(); // Модальное окно
+            gifForm.Show(); // Немодальное окно
         }
     }
 }
