@@ -186,7 +186,7 @@
             // 
             // resetSearchButton
             // 
-            resetSearchButton.Location = new Point(129, 507);
+            resetSearchButton.Location = new Point(128, 507);
             resetSearchButton.Margin = new Padding(4);
             resetSearchButton.Name = "resetSearchButton";
             resetSearchButton.Size = new Size(90, 33);

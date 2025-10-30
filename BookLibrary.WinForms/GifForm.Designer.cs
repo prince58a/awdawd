@@ -36,9 +36,9 @@
             // pictureBox1
             // 
             pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(12, 12);
+            pictureBox1.Location = new Point(11, 12);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(404, 715);
+            pictureBox1.Size = new Size(400, 649);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             // 
@@ -46,9 +46,10 @@
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(429, 628);
+            ClientSize = new Size(422, 673);
             Controls.Add(pictureBox1);
             Name = "GifForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "GifForm";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
