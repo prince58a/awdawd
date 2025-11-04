@@ -28,7 +28,7 @@ namespace BookLibrary.WinForms
 
         private static IRepository<Book> CreateRepository(string repositoryType)
         {
-            var dataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BookLibrary");
+            var dataFolder = Path.Combine(@"C:\Users\Gosha\Documents\GitHub", "awdawd"); 
             Directory.CreateDirectory(dataFolder);
 
             var dbPath = Path.Combine(dataFolder, "BookLibrary.db");
@@ -275,6 +275,8 @@ namespace BookLibrary.WinForms
             ResetSearch();
         }
 
+
+
         private void SearchBookById()
         {
             string input = idSearchTextBox.Text.Trim();
@@ -345,6 +347,11 @@ namespace BookLibrary.WinForms
             GifForm gifForm = new GifForm();
             //gifForm.ShowDialog(); // Модальное окно
             gifForm.Show(); // Немодальное окно
+        }
+
+        private void update_Click(object sender, EventArgs e)
+        {
+            LoadBooks();
         }
     }
 }

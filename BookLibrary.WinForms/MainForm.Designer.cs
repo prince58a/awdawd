@@ -50,6 +50,7 @@
             label3 = new Label();
             pictureBox1 = new PictureBox();
             label4 = new Label();
+            update = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
@@ -191,7 +192,7 @@
             resetSearchButton.Name = "resetSearchButton";
             resetSearchButton.Size = new Size(90, 33);
             resetSearchButton.TabIndex = 3;
-            resetSearchButton.Text = "Обновить";
+            resetSearchButton.Text = "Сброс";
             resetSearchButton.UseVisualStyleBackColor = true;
             resetSearchButton.Click += BtnResetSearch_Click;
             // 
@@ -231,7 +232,7 @@
             // pictureBox1
             // 
             pictureBox1.Image = Properties.Resources.jhoe;
-            pictureBox1.Location = new Point(435, 670);
+            pictureBox1.Location = new Point(432, 670);
             pictureBox1.Margin = new Padding(4);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(420, 200);
@@ -244,18 +245,30 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 16F);
-            label4.Location = new Point(15, 733);
+            label4.Location = new Point(7, 733);
             label4.Margin = new Padding(4, 0, 4, 0);
             label4.Name = "label4";
             label4.Size = new Size(403, 37);
             label4.TabIndex = 18;
             label4.Text = "Какой же он крутой, я не могу";
             // 
+            // update
+            // 
+            update.Location = new Point(26, 566);
+            update.Margin = new Padding(4);
+            update.Name = "update";
+            update.Size = new Size(192, 49);
+            update.TabIndex = 19;
+            update.Text = "Обновить";
+            update.UseVisualStyleBackColor = true;
+            update.Click += update_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(872, 651);
+            ClientSize = new Size(872, 653);
+            Controls.Add(update);
             Controls.Add(label4);
             Controls.Add(pictureBox1);
             Controls.Add(label3);
@@ -276,7 +289,7 @@
             Controls.Add(dataGridView1);
             Margin = new Padding(4);
             MaximumSize = new Size(890, 920);
-            MinimumSize = new Size(890, 698);
+            MinimumSize = new Size(890, 700);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Библиотека книг";
@@ -291,6 +304,7 @@
         {
             LoadBooks();
         }
+        private Button update;
     }
 
 }

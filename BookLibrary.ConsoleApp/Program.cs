@@ -51,7 +51,7 @@ namespace BookLibrary.ConsoleApp
 
         private static IRepository<Book> CreateRepository(string repositoryType)
         {
-            var dataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BookLibrary");
+            var dataFolder = Path.Combine(@"C:\Users\Gosha\Documents\GitHub", "awdawd");
             Directory.CreateDirectory(dataFolder);
 
             var dbPath = Path.Combine(dataFolder, "BookLibrary.db");
