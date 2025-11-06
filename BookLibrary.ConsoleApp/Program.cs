@@ -9,6 +9,7 @@ namespace BookLibrary.ConsoleApp
     {
         private static BookLogic logic;
 
+
         static void Main(string[] args)
         {
             var (bookRepo, genreRepo) = CreateRepositories("Dapper"); // или "EF"
@@ -25,7 +26,6 @@ namespace BookLibrary.ConsoleApp
                 "\n5. Поиск по автору" +
                 "\n6. Группировка по жанрам" +
                 "\n7. Книги после указанного года" +
-                "\n8. Управление жанрами" +
                 "\n0. Выход");
 
                 Console.Write("Выберите действие: ");
@@ -41,7 +41,6 @@ namespace BookLibrary.ConsoleApp
                     case "5": SearchByAuthor(); break;
                     case "6": GroupByGenre(); break;
                     case "7": ShowBooksAfterYear(); break;
-                    case "8": ManageGenres(); break;
                     case "0": Environment.Exit(0); break;
                     default: Console.WriteLine("Неверный выбор!"); break;
                 }
@@ -76,6 +75,10 @@ namespace BookLibrary.ConsoleApp
             }
         }
 
+
+
+
+
         private static void ShowAllBooks()
         {
             var books = logic.GetAllBooks();
@@ -89,6 +92,34 @@ namespace BookLibrary.ConsoleApp
             foreach (var book in books)
             {
                 Console.WriteLine(book);
+            }
+        }
+
+
+        static int currentPage = 1;
+        const int booksPerPage = 10;
+
+        // ПАГИНАЦИЯ ДЛЯ КОНСОЛ АПП
+        private static void ShowBooksPage()
+        {
+            var totalBooks = logic.GetAllBooks().Count;
+            var totalPages = (int)Math.Ceiling(totalBooks / (double)booksPerPage);
+
+
+            while (true)
+            {
+                Console.Clear();
+                var books = logic.GetBooksPage(currentPage, booksPerPage);
+                Console.WriteLine($"=== Страница {currentPage} из {totalPages} ===");
+                foreach (var book in books)
+                {
+                    Console.WriteLine(book);
+                }
+                Console.WriteLine("\n[n] - следующая, [p] - предыдущая, [0] - выход");
+                var key = Console.ReadKey(true).KeyChar;
+                if (key == 'n' && currentPage < totalPages) currentPage++;
+                else if (key == 'p' && currentPage > 1) currentPage--;
+                else if (key == '0') break;
             }
         }
 
@@ -187,16 +218,16 @@ namespace BookLibrary.ConsoleApp
             if (logic.UpdateBook(id, title, author, year, genreId))
             {
                 Console.WriteLine("Книга обновлена!");
+                string tempFolder = @"C:\Temp";
+                Directory.CreateDirectory(tempFolder);
+                File.Create(@"C:\Temp\refresh.signal").Dispose();
             }
             else
             {
                 Console.WriteLine("Ошибка обновления!");
             }
-
-            string tempFolder = @"C:\Temp";
-            Directory.CreateDirectory(tempFolder);
-            File.Create(@"C:\Temp\refresh.signal").Dispose();
         }
+
 
         private static void DeleteBook()
         {
@@ -210,15 +241,14 @@ namespace BookLibrary.ConsoleApp
             if (logic.DeleteBook(id))
             {
                 Console.WriteLine("Книга удалена!");
+                string tempFolder = @"C:\Temp";
+                Directory.CreateDirectory(tempFolder);
+                File.Create(@"C:\Temp\refresh.signal").Dispose();
             }
             else
             {
                 Console.WriteLine("Книга не найдена!");
             }
-
-            string tempFolder = @"C:\Temp";
-            Directory.CreateDirectory(tempFolder);
-            File.Create(@"C:\Temp\refresh.signal").Dispose();
         }
 
         private static void SearchByAuthor()
@@ -290,75 +320,6 @@ namespace BookLibrary.ConsoleApp
             {
                 Console.WriteLine(book);
             }
-        }
-
-        // Простое управление жанрами в консоли (CRUD)
-        private static void ManageGenres()
-        {
-            while (true)
-            {
-                Console.WriteLine("\n=== УПРАВЛЕНИЕ ЖАНРАМИ ===");
-                Console.WriteLine("1. Показать все жанры");
-                Console.WriteLine("2. Добавить жанр");
-                Console.WriteLine("3. Редактировать жанр");
-                Console.WriteLine("4. Удалить жанр");
-                Console.WriteLine("0. Назад");
-                Console.Write("Выберите: ");
-                var c = Console.ReadLine();
-                switch (c)
-                {
-                    case "1":
-                        var gs = logic.GetAvailableGenres();
-                        foreach (var g in gs) Console.WriteLine(g);
-                        break;
-                    case "2":
-                        Console.Write("Название жанра: ");
-                        var name = Console.ReadLine();
-                        var genreRepo = GetGenreRepository();
-                        genreRepo.Add(new Genre { Name = name });
-                        Console.WriteLine("Добавлено.");
-                        break;
-                    case "3":
-                        var genres = logic.GetAvailableGenres();
-                        foreach (var g in genres) Console.WriteLine(g);
-                        Console.Write("ID для редактирования: ");
-                        if (int.TryParse(Console.ReadLine(), out int gidEdit))
-                        {
-                            var grRepo = GetGenreRepository();
-                            var g = grRepo.ReadById(gidEdit);
-                            if (g != null)
-                            {
-                                Console.Write("Новое имя: ");
-                                g.Name = Console.ReadLine();
-                                grRepo.Update(g);
-                                Console.WriteLine("Обновлено.");
-                            }
-                            else Console.WriteLine("Не найдено.");
-                        }
-                        break;
-                    case "4":
-                        var gg = logic.GetAvailableGenres();
-                        foreach (var g in gg) Console.WriteLine(g);
-                        Console.Write("ID для удаления: ");
-                        if (int.TryParse(Console.ReadLine(), out int gidDel))
-                        {
-                            var rr = GetGenreRepository();
-                            if (rr.Delete(gidDel)) Console.WriteLine("Удалено.");
-                            else Console.WriteLine("Ошибка удаления.");
-                        }
-                        break;
-                    case "0": return;
-                }
-            }
-        }
-
-        private static IRepository<Genre> GetGenreRepository()
-        {
-            // Создадим временный репозиторий такой же, как при старте
-            var dataFolder = Path.Combine(@"C:\Users\Gosha\Documents\GitHub", "awdawd");
-            var dbPath = Path.Combine(dataFolder, "BookLibrary.db");
-            var connectionString = $"Data Source={dbPath}";
-            return new DapperGenreRepository(connectionString);
         }
     }
 }
