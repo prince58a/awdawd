@@ -3,6 +3,7 @@ using BookLibrary.DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Media;
@@ -33,6 +34,9 @@ namespace BookLibrary.WinForms
 
         }
 
+        /// <summary>
+        /// Возвращает 2 объекта типа IRepo исходя из запроса Dapper или EF
+        /// </summary>
         private static (IRepository<Book>, IRepository<Genre>) CreateRepositories(string repositoryType)
         {
             var dataFolder = Path.Combine(@"C:\Users\dshel\Документы", "awdawd");                     //ПОМЕНЯТЬ ПУТЬ!!!!!!!
@@ -56,24 +60,9 @@ namespace BookLibrary.WinForms
             }
         }
 
-        private void BtnNextPage_Click(object sender, EventArgs e)
-        {
-            if (currentPage < totalPages)
-            {
-                currentPage++;
-                LoadPaginatedBooks();
-            }
-        }
-
-        private void BtnPrevPage_Click(object sender, EventArgs e)
-        {
-            if (currentPage > 1)
-            {
-                currentPage--;
-                LoadPaginatedBooks();
-            }
-        }
-
+        /// <summary>
+        /// Хз, это егор делал
+        /// </summary>
         private void StartFileFlagListener()
         {
             Task.Run(() =>
@@ -91,20 +80,23 @@ namespace BookLibrary.WinForms
             });
         }
 
-        private void LoadPaginatedBooks()
+        #region Кнопки
+        private void BtnNextPage_Click(object sender, EventArgs e)
         {
-            var booksList = logic.GetAllBooks();
-            totalPages = (int)Math.Ceiling(booksList.Count / (double)booksPerPage);
-            var booksPage = booksList
-                .Skip((currentPage - 1) * booksPerPage)
-                .Take(booksPerPage)
-                .ToList();
-            dataGridView1.DataSource = booksPage;
-            labelPageInfo.Text = $"Страница {currentPage} из {totalPages}";
+            if (currentPage < totalPages)
+            {
+                currentPage++;
+                LoadPaginatedBooks();
+            }
+        }
 
-            LoadAuthors();
-            LoadYears();
-            LoadGenres();
+        private void BtnPrevPage_Click(object sender, EventArgs e)
+        {
+            if (currentPage > 1)
+            {
+                currentPage--;
+                LoadPaginatedBooks();
+            }
         }
 
         private void BtnADD_Click(object sender, EventArgs e)
@@ -125,7 +117,6 @@ namespace BookLibrary.WinForms
             }
         }
 
-
         private void BtnEDIT_Click(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count == 0)
@@ -145,7 +136,6 @@ namespace BookLibrary.WinForms
                 LoadPaginatedBooks();
             }
         }
-
 
         private void BtnDEL_Click(object sender, EventArgs e)
         {
@@ -176,7 +166,7 @@ namespace BookLibrary.WinForms
                     "Приключения","Научная литература","Биография","Поэзия","Роман-антиутопия" };
 
             var genre = GenereSearchComboBox.SelectedItem.ToString();
-            int genreId = kostil.IndexOf(genre);
+            int genreId = kostil.IndexOf(genre) + 1;
             var books = logic.GetBooksByGenre(genreId);
 
             if (books.Count == 0)
@@ -234,6 +224,45 @@ namespace BookLibrary.WinForms
             LoadPaginatedBooks();
         }
 
+        private void BtnSearchById_Click(object sender, EventArgs e)
+        {
+            SearchBookById();
+        }
+
+        private void BtnResetSearch_Click(object sender, EventArgs e)
+        {
+            ResetSearch();
+        }
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            PlayBackgroundSound();
+
+            OpenGifWindow();
+        }
+
+        #endregion
+
+        #region Методы
+
+        /// <summary>
+        /// Вывод книг из бд на винформу, учитывая ограничение кол-ва книг на странице
+        /// </summary>
+        private void LoadPaginatedBooks()
+        {
+            var booksList = logic.GetAllBooks();
+            totalPages = (int)Math.Ceiling(booksList.Count / (double)booksPerPage);
+            var booksPage = booksList
+                .Skip((currentPage - 1) * booksPerPage)
+                .Take(booksPerPage)
+                .ToList();
+            dataGridView1.DataSource = booksPage;
+            labelPageInfo.Text = $"Страница {currentPage} из {totalPages}";
+
+            LoadAuthors();
+            LoadYears();
+            LoadGenres();
+        }
+
         private void LoadAuthors()
         {
             var authors = logic.GetAllBooks()
@@ -279,16 +308,6 @@ namespace BookLibrary.WinForms
                 YearSearchComboBox.SelectedIndex = 0;
         }
 
-        private void BtnSearchById_Click(object sender, EventArgs e)
-        {
-            SearchBookById();
-        }
-
-        private void BtnResetSearch_Click(object sender, EventArgs e)
-        {
-            ResetSearch();
-        }
-
         private void SearchBookById()
         {
             string input = idSearchTextBox.Text.Trim();
@@ -323,18 +342,15 @@ namespace BookLibrary.WinForms
             LoadPaginatedBooks();
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-            PlayBackgroundSound();
 
-            OpenGifWindow();
-        }
-
+        /// <summary>
+        /// Загрузка звукового файла
+        /// </summary>
         private void InitializeSound()
         {
             try
             {
-                soundPlayer = new SoundPlayer(@"C:\Users\Gosha\Documents\GitHub\awdawd\BookLibrary.WinForms\Files\sound.wav");
+                soundPlayer = new SoundPlayer(@"Files\sound.wav");
             }
             catch (Exception ex)
             {
@@ -360,5 +376,6 @@ namespace BookLibrary.WinForms
             //gifForm.ShowDialog(); // Модальное окно
             gifForm.Show(); // Немодальное окно
         }
+        #endregion
     }
 }

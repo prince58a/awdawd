@@ -9,6 +9,8 @@ namespace BookLibrary.ConsoleApp
     {
         private static BookLogic logic;
 
+        static int currentPage = 1;
+        const int booksPerPage = 10;
 
         static void Main(string[] args)
         {
@@ -75,31 +77,7 @@ namespace BookLibrary.ConsoleApp
             }
         }
 
-
-
-
-
-        private static void ShowAllBooks()
-        {
-            var books = logic.GetAllBooks();
-            if (books.Count == 0)
-            {
-                Console.WriteLine("Книги не найдены.");
-                return;
-            }
-
-            Console.WriteLine("\n=== ВСЕ КНИГИ ===");
-            foreach (var book in books)
-            {
-                Console.WriteLine(book);
-            }
-        }
-
-
-        static int currentPage = 1;
-        const int booksPerPage = 10;
-
-        // ПАГИНАЦИЯ ДЛЯ КОНСОЛ АПП
+        #region Пагинация в консол Апп
         private static void ShowBooksPage()
         {
             var totalBooks = logic.GetAllBooks().Count;
@@ -120,6 +98,23 @@ namespace BookLibrary.ConsoleApp
                 if (key == 'n' && currentPage < totalPages) currentPage++;
                 else if (key == 'p' && currentPage > 1) currentPage--;
                 else if (key == '0') break;
+            }
+        }
+        #endregion 
+
+        private static void ShowAllBooks()
+        {
+            var books = logic.GetAllBooks();
+            if (books.Count == 0)
+            {
+                Console.WriteLine("Книги не найдены.");
+                return;
+            }
+
+            Console.WriteLine("\n=== ВСЕ КНИГИ ===");
+            foreach (var book in books)
+            {
+                Console.WriteLine(book);
             }
         }
 
@@ -153,31 +148,6 @@ namespace BookLibrary.ConsoleApp
             string tempFolder = @"C:\Temp";
             Directory.CreateDirectory(tempFolder);
             File.Create(@"C:\Temp\refresh.signal").Dispose();
-        }
-
-        private static int SelectGenre()
-        {
-            var genres = logic.GetAvailableGenres();
-
-            while (true)
-            {
-                Console.WriteLine("\nВыберите жанр:");
-                foreach (var g in genres)
-                {
-                    Console.WriteLine($"{g.Id}. {g.Name}");
-                }
-
-                Console.Write($"Введите ID жанра: ");
-
-                if (!int.TryParse(Console.ReadLine(), out int genreChoice) ||
-                    !genres.Any(g => g.Id == genreChoice))
-                {
-                    Console.WriteLine($"Ошибка: введите корректный ID жанра!");
-                    continue;
-                }
-
-                return genreChoice;
-            }
         }
 
         private static void EditBook()
@@ -227,7 +197,6 @@ namespace BookLibrary.ConsoleApp
                 Console.WriteLine("Ошибка обновления!");
             }
         }
-
 
         private static void DeleteBook()
         {
@@ -319,6 +288,31 @@ namespace BookLibrary.ConsoleApp
             foreach (var book in books)
             {
                 Console.WriteLine(book);
+            }
+        }
+
+        private static int SelectGenre()
+        {
+            var genres = logic.GetAvailableGenres();
+
+            while (true)
+            {
+                Console.WriteLine("\nВыберите жанр:");
+                foreach (var g in genres)
+                {
+                    Console.WriteLine($"{g.Id}. {g.Name}");
+                }
+
+                Console.Write($"Введите ID жанра: ");
+
+                if (!int.TryParse(Console.ReadLine(), out int genreChoice) ||
+                    !genres.Any(g => g.Id == genreChoice))
+                {
+                    Console.WriteLine($"Ошибка: введите корректный ID жанра!");
+                    continue;
+                }
+
+                return genreChoice;
             }
         }
     }
