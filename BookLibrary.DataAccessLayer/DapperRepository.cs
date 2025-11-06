@@ -31,20 +31,42 @@ namespace BookLibrary.DataAccessLayer
                 if (tableExists == 0)
                 {
                     var createTableSql = @"
-                            CREATE TABLE Books (
-                                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                Title TEXT NOT NULL,
-                                Author TEXT NOT NULL,
-                                Year INTEGER NOT NULL,
-                                Genre TEXT NOT NULL
-                            )";
-
+                        CREATE TABLE Books (
+                            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            Title TEXT NOT NULL,
+                            Author TEXT NOT NULL,
+                            Year INTEGER NOT NULL,
+                            GenreId INTEGER NOT NULL,
+                            FOREIGN KEY (GenreId) REFERENCES Genres(Id)
+                        )";
                     connection.Execute(createTableSql);
                     Console.WriteLine("Таблица Books создана успешно");
                 }
-                else
+
+                var genresExists = connection.ExecuteScalar<int>(
+                    "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='Genres'");
+
+                if (genresExists == 0)
                 {
-                    Console.WriteLine("Таблица Books уже существует");
+                    var createGenres = @"
+                        CREATE TABLE Genres (
+                            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            Name TEXT NOT NULL UNIQUE
+                        )";
+                    connection.Execute(createGenres);
+
+                    var names = new[]
+                    {
+                        "Фантастика","Детектив","Роман","Фэнтези","Ужасы",
+                        "Приключения","Научная литература","Биография","Поэзия","Роман-антиутопия"
+                    };
+
+                    foreach (var n in names)
+                    {
+                        connection.Execute("INSERT INTO Genres (Name) VALUES (@Name)", new { Name = n });
+                    }
+
+                    Console.WriteLine("Таблица Genres создана и заполнена");
                 }
             }
             catch (Exception ex)
@@ -57,12 +79,12 @@ namespace BookLibrary.DataAccessLayer
         public void Add(Book item)
         {
             using IDbConnection db = new SqliteConnection(_connectionString);
-            var sql = @"INSERT INTO Books (Title, Author, Year, Genre) 
-                           VALUES (@Title, @Author, @Year, @Genre);
+            var sql = @"INSERT INTO Books (Title, Author, Year, GenreId) 
+                           VALUES (@Title, @Author, @Year, @GenreId);
                            SELECT last_insert_rowid();";
 
-            var id = db.Query<int>(sql, item).Single();
-            item.Id = id;
+            var id = db.Query<long>(sql, item).Single();
+            item.Id = (int)id;
         }
 
         public bool Delete(int id)
@@ -76,20 +98,48 @@ namespace BookLibrary.DataAccessLayer
         public IEnumerable<Book> ReadAll()
         {
             using IDbConnection db = new SqliteConnection(_connectionString);
-            return db.Query<Book>("SELECT * FROM Books");
+            var sql = @"SELECT b.Id, b.Title, b.Author, b.Year, b.GenreId,
+                               g.Id, g.Name
+                        FROM Books b
+                        LEFT JOIN Genres g ON b.GenreId = g.Id";
+
+            var list = db.Query<Book, Genre, Book>(
+                sql,
+                (book, genre) =>
+                {
+                    book.Genre = genre;
+                    return book;
+                },
+                splitOn: "Id"
+            );
+
+            return list;
         }
 
         public Book ReadById(int id)
         {
             using IDbConnection db = new SqliteConnection(_connectionString);
-            return db.QueryFirstOrDefault<Book>("SELECT * FROM Books WHERE Id = @Id", new { Id = id });
+            var sql = @"SELECT b.Id, b.Title, b.Author, b.Year, b.GenreId,
+                               g.Id, g.Name
+                        FROM Books b
+                        LEFT JOIN Genres g ON b.GenreId = g.Id
+                        WHERE b.Id = @Id";
+
+            var result = db.Query<Book, Genre, Book>(
+                sql,
+                (book, genre) => { book.Genre = genre; return book; },
+                new { Id = id },
+                splitOn: "Id"
+            ).FirstOrDefault();
+
+            return result;
         }
 
         public bool Update(Book item)
         {
             using IDbConnection db = new SqliteConnection(_connectionString);
             var sql = @"UPDATE Books 
-                           SET Title = @Title, Author = @Author, Year = @Year, Genre = @Genre 
+                           SET Title = @Title, Author = @Author, Year = @Year, GenreId = @GenreId 
                            WHERE Id = @Id";
             var affectedRows = db.Execute(sql, item);
             return affectedRows > 0;

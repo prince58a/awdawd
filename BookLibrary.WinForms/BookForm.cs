@@ -1,19 +1,20 @@
 ﻿using BookLibrary.Core;
 using System;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace BookLibrary.WinForms
 {
     public partial class BookForm : Form
     {
-        private string[] availableGenres;
+        private Genre[] availableGenres;
 
         public string BookTitle { get; private set; }
         public string BookAuthor { get; private set; }
         public int BookYear { get; private set; }
-        public string BookGenre { get; private set; }
+        public int BookGenreId { get; private set; }
 
-        public BookForm(string[] genres)
+        public BookForm(Genre[] genres)
         {
             availableGenres = genres;
             InitializeComponent();
@@ -21,7 +22,7 @@ namespace BookLibrary.WinForms
             Text = "Добавить книгу";
         }
 
-        public BookForm(Book book, string[] genres)
+        public BookForm(Book book, Genre[] genres)
         {
             availableGenres = genres;
             InitializeComponent();
@@ -30,13 +31,15 @@ namespace BookLibrary.WinForms
             txtTitle.Text = book.Title;
             txtAuthor.Text = book.Author;
             txtYear.Text = book.Year.ToString();
-            cmbGenre.SelectedItem = book.Genre;
+            cmbGenre.SelectedValue = book.GenreId;
         }
 
         private void InitializeGenreComboBox()
         {
             cmbGenre.Items.Clear();
-            cmbGenre.Items.AddRange(availableGenres);
+            cmbGenre.DataSource = availableGenres;
+            cmbGenre.DisplayMember = "Name";
+            cmbGenre.ValueMember = "Id";
             if (cmbGenre.Items.Count > 0)
                 cmbGenre.SelectedIndex = 0;
         }
@@ -63,7 +66,7 @@ namespace BookLibrary.WinForms
             BookTitle = txtTitle.Text;
             BookAuthor = txtAuthor.Text;
             BookYear = year;
-            BookGenre = cmbGenre.SelectedItem.ToString();
+            BookGenreId = (int)cmbGenre.SelectedValue;
 
             DialogResult = DialogResult.OK;
         }

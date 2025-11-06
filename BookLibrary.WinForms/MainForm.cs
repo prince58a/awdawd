@@ -13,13 +13,15 @@ namespace BookLibrary.WinForms
     public partial class MainForm : Form
     {
         private readonly BookLogic logic;
+        private readonly IRepository<Genre> genreRepo;
         private SoundPlayer soundPlayer;
 
 
         public MainForm()
         {
-            var repository = CreateRepository("Dapper"); // "Dapper" или "EF"
-            logic = new BookLogic(repository);
+            var (bookRepo, gRepo) = CreateRepositories("Dapper"); // "Dapper" или "EF"
+            genreRepo = gRepo;
+            logic = new BookLogic(bookRepo, genreRepo);
 
             InitializeComponent();
             LoadPaginatedBooks();
@@ -27,6 +29,31 @@ namespace BookLibrary.WinForms
             StartFileFlagListener();
 
         }
+
+        private static (IRepository<Book>, IRepository<Genre>) CreateRepositories(string repositoryType)
+        {
+            var dataFolder = Path.Combine(@"C:\Users\dshel\Документы", "awdawd");                     //ПОМЕНЯТЬ ПУТЬ!!!!!!!
+            Directory.CreateDirectory(dataFolder);
+
+            var dbPath = Path.Combine(dataFolder, "BookLibrary.db");
+            var connectionString = $"Data Source={dbPath}";
+
+            if (repositoryType == "EF")
+            {
+                var context = new BookDbContext(dbPath);
+                var bookRepo = new EntityRepository(context);
+                var genreRepo = new EntityGenreRepository(context);
+                return (bookRepo, genreRepo);
+            }
+            else
+            {
+                var bookRepo = new DapperRepository(connectionString);
+                var genreRepo = new DapperGenreRepository(connectionString);
+                return (bookRepo, genreRepo);
+            }
+        }
+
+
 
         private void BtnNextPage_Click(object sender, EventArgs e)
         {
@@ -135,17 +162,22 @@ namespace BookLibrary.WinForms
 
         private void BtnADD_Click(object sender, EventArgs e)
         {
-            var form = new BookForm(BookLogic.GetAvailableGenres());
+            var genres = logic.GetAvailableGenres().ToArray();
+            var form = new BookForm(genres);
             if (form.ShowDialog() == DialogResult.OK)
             {
-                var result = logic.CreateBook(form.BookTitle, form.BookAuthor, form.BookYear, form.BookGenre);
+                var result = logic.CreateBook(form.BookTitle, form.BookAuthor, form.BookYear, form.BookGenreId);
                 if (!result.Success)
                 {
                     MessageBox.Show(result.Message);
                 }
+                else
+                {
+                    LoadBooks();
+                }
             }
-            LoadPaginatedBooks();
         }
+
 
         private void BtnEDIT_Click(object sender, EventArgs e)
         {
@@ -155,14 +187,19 @@ namespace BookLibrary.WinForms
                 return;
             }
 
-            var book = (Book)dataGridView1.SelectedRows[0].DataBoundItem;
-            var form = new BookForm(book, BookLogic.GetAvailableGenres());
+            // получаем Id из выбранной строки
+            var id = (int)dataGridView1.SelectedRows[0].Cells["Id"].Value;
+            var book = logic.GetBook(id);
+            var genres = logic.GetAvailableGenres().ToArray();
+
+            var form = new BookForm(book, genres);
             if (form.ShowDialog() == DialogResult.OK)
             {
-                logic.UpdateBook(book.Id, form.BookTitle, form.BookAuthor, form.BookYear, form.BookGenre);
+                logic.UpdateBook(book.Id, form.BookTitle, form.BookAuthor, form.BookYear, form.BookGenreId);
+                LoadBooks();
             }
-            LoadPaginatedBooks();
         }
+
 
         private void BtnDEL_Click(object sender, EventArgs e)
         {
@@ -189,8 +226,13 @@ namespace BookLibrary.WinForms
                 return;
             }
 
+            List<string> kostil = new List<string> { "Фантастика","Детектив","Роман","Фэнтези","Ужасы",
+                    "Приключения","Научная литература","Биография","Поэзия","Роман-антиутопия" };
+
             var genre = GenereSearchComboBox.SelectedItem.ToString();
-            var books = logic.GetBooksByGenre(genre);
+
+            int genreId = kostil.IndexOf(genre);
+            var books = logic.GetBooksByGenre(genreId);
 
             if (books.Count == 0)
             {

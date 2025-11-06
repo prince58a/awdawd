@@ -5,9 +5,15 @@ using BookLibrary.Core;
 
 namespace BookLibrary.DataAccessLayer
 {
-    public class EntityRepository(BookDbContext context) : IRepository<Book>
+    public class EntityRepository : IRepository<Book>
     {
-        private readonly BookDbContext _context = context;
+        private readonly BookDbContext _context;
+
+        public EntityRepository(BookDbContext context)
+        {
+            _context = context;
+            _context.InitializeDatabase();
+        }
 
         public void Add(Book item)
         {
@@ -27,19 +33,25 @@ namespace BookLibrary.DataAccessLayer
             return false;
         }
 
-        public IEnumerable<Book> ReadAll() => [.. _context.Books];
+        public IEnumerable<Book> ReadAll()
+        {
+            return _context.Books.Include(b => b.Genre).ToList();
+        }
 
         public Book ReadById(int id)
         {
-            return _context.Books.Find(id);
+            return _context.Books.Include(b => b.Genre).FirstOrDefault(b => b.Id == id);
         }
 
         public bool Update(Book item)
         {
-            var existingBook = _context.Books.Find(item.Id);
-            if (existingBook != null)
+            var existing = _context.Books.Find(item.Id);
+            if (existing != null)
             {
-                _context.Entry(existingBook).CurrentValues.SetValues(item);
+                existing.Title = item.Title;
+                existing.Author = item.Author;
+                existing.Year = item.Year;
+                existing.GenreId = item.GenreId;
                 _context.SaveChanges();
                 return true;
             }
