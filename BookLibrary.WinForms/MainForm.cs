@@ -22,13 +22,71 @@ namespace BookLibrary.WinForms
             logic = new BookLogic(repository);
 
             InitializeComponent();
-            LoadBooks();
+            LoadPaginatedBooks();
             InitializeSound();
+            StartFileFlagListener();
+
         }
+
+        private void BtnNextPage_Click(object sender, EventArgs e)
+        {
+            if (currentPage < totalPages)
+            {
+                currentPage++;
+                LoadPaginatedBooks();
+            }
+        }
+
+        private void BtnPrevPage_Click(object sender, EventArgs e)
+        {
+            if (currentPage > 1)
+            {
+                currentPage--;
+                LoadPaginatedBooks();
+            }
+        }
+
+
+        private void StartFileFlagListener()
+        {
+            Task.Run(() =>
+            {
+                string flagPath = @"C:\Temp\refresh.signal";
+                while (true)
+                {
+                    if (File.Exists(flagPath))
+                    {
+                        this.Invoke(new Action(LoadPaginatedBooks));
+                        File.Delete(flagPath);
+                    }
+                    Thread.Sleep(500); // чтобы не грузить процессор
+                }
+            });
+        }
+
+        private int currentPage = 1;
+        private int booksPerPage = 10;
+        private int totalPages = 1;
+
+        private void LoadPaginatedBooks()
+        {
+            var booksList = logic.GetAllBooks();
+            totalPages = (int)Math.Ceiling(booksList.Count / (double)booksPerPage);
+            var booksPage = booksList
+                .Skip((currentPage - 1) * booksPerPage)
+                .Take(booksPerPage)
+                .ToList();
+            dataGridView1.DataSource = booksPage;
+            labelPageInfo.Text = $"Страница {currentPage} из {totalPages}";
+        }
+
+
+        // На кнопках вперёд/назад увеличивать/уменьшать currentPage и вызывать LoadPaginatedBooks.
+
 
         private static IRepository<Book> CreateRepository(string repositoryType)
         {
-            var dataFolder = Path.Combine(@"C:\Users\Gosha\Documents\GitHub", "awdawd"); 
+            var dataFolder = Path.Combine(@"C:\Users\egorg\Documents\GitHub", "awdawd"); 
             Directory.CreateDirectory(dataFolder);
 
             var dbPath = Path.Combine(dataFolder, "BookLibrary.db");
@@ -49,43 +107,6 @@ namespace BookLibrary.WinForms
             }
         }
 
-
-
-
-        private void OnDataFileChanged(object sender, FileSystemEventArgs e)
-        {
-            // код пробует несколько раз проверить файл, тк он может быть просто не доступен, хихи хаха, костыль кароче
-            for (int i = 0; i < 3; i++)
-            {
-                try
-                {
-                    Thread.Sleep(100);
-
-                    if (this.InvokeRequired)
-                    {
-                        this.Invoke(new Action(() =>
-                        {
-                            LoadBooks();
-                            Console.WriteLine($"[WinForms] Данные обновлены: {DateTime.Now:HH:mm:ss}");
-                        }));
-                    }
-                    else
-                    {
-                        LoadBooks();
-                    }
-                    break; // чтобы не было лишних телодвижений то закрытие
-                }
-                catch (Exception ex)
-                {
-                    if (i == 2) // Леди джентльмены, у нас есть последний шанс...
-                    {
-                        Console.WriteLine($"[WinForms] Ошибка обновления: {ex.Message}");
-                    }
-                    Thread.Sleep(50);
-                }
-            }
-        }
-
         private void Repository_DataChanged(object sender, EventArgs e)
         {
             if (this.InvokeRequired)
@@ -94,7 +115,7 @@ namespace BookLibrary.WinForms
             }
             else
             {
-                LoadBooks();
+                LoadPaginatedBooks();
             }
         }
 
@@ -123,6 +144,7 @@ namespace BookLibrary.WinForms
                     MessageBox.Show(result.Message);
                 }
             }
+            LoadPaginatedBooks();
         }
 
         private void BtnEDIT_Click(object sender, EventArgs e)
@@ -139,6 +161,7 @@ namespace BookLibrary.WinForms
             {
                 logic.UpdateBook(book.Id, form.BookTitle, form.BookAuthor, form.BookYear, form.BookGenre);
             }
+            LoadPaginatedBooks();
         }
 
         private void BtnDEL_Click(object sender, EventArgs e)
@@ -155,6 +178,7 @@ namespace BookLibrary.WinForms
             {
                 logic.DeleteBook(book.Id);
             }
+            LoadPaginatedBooks();
         }
 
         private void BtnSORTGenre_Click(object sender, EventArgs e)
@@ -176,6 +200,7 @@ namespace BookLibrary.WinForms
 
             var result = string.Join("\n", books.Select(b => b.ToString()));
             MessageBox.Show(result, $"Книги жанра {genre}");
+            LoadBooks();
         }
 
         private void BtnSORTAuthor_Click(object sender, EventArgs e)
@@ -197,6 +222,7 @@ namespace BookLibrary.WinForms
 
             var result = string.Join("\n", books.Select(b => b.ToString()));
             MessageBox.Show(result, $"Книги автора {author}");
+            LoadBooks();
         }
 
         private void BtnSORTYear_Click(object sender, EventArgs e)
@@ -218,6 +244,7 @@ namespace BookLibrary.WinForms
 
             var result = string.Join("\n", books.Select(b => b.ToString()));
             MessageBox.Show(result, $"Книги вышедшие после {year} года");
+            LoadBooks();
         }
 
         private void LoadAuthors()
@@ -268,11 +295,13 @@ namespace BookLibrary.WinForms
         private void BtnSearchById_Click(object sender, EventArgs e)
         {
             SearchBookById();
+            LoadPaginatedBooks();
         }
 
         private void BtnResetSearch_Click(object sender, EventArgs e)
         {
             ResetSearch();
+            LoadPaginatedBooks();
         }
 
 
@@ -303,6 +332,7 @@ namespace BookLibrary.WinForms
             dataGridView1.DataSource = new List<Book> { book };
             if (dataGridView1.Rows.Count > 0)
                 dataGridView1.Rows[0].Selected = true;
+            LoadBooks();
         }
 
         private void ResetSearch()

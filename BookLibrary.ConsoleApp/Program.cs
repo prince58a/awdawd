@@ -9,6 +9,7 @@ namespace BookLibrary.ConsoleApp
     {
         private static BookLogic logic;
 
+
         static void Main(string[] args)
         {
             var repository = CreateRepository("Dapper"); // "Dapper" или "EF"
@@ -33,7 +34,7 @@ namespace BookLibrary.ConsoleApp
 
                 switch (choice)
                 {
-                    case "1": ShowAllBooks(); break;
+                    case "1": ShowBooksPage(); break;
                     case "2": AddBook(); break;
                     case "3": EditBook(); break;
                     case "4": DeleteBook(); break;
@@ -51,7 +52,7 @@ namespace BookLibrary.ConsoleApp
 
         private static IRepository<Book> CreateRepository(string repositoryType)
         {
-            var dataFolder = Path.Combine(@"C:\Users\Gosha\Documents\GitHub", "awdawd");
+            var dataFolder = Path.Combine(@"C:\Users\egorg\Documents\GitHub", "awdawd");
             Directory.CreateDirectory(dataFolder);
 
             var dbPath = Path.Combine(dataFolder, "BookLibrary.db");
@@ -92,7 +93,36 @@ namespace BookLibrary.ConsoleApp
             {
                 Console.WriteLine(book);
             }
+            string tempFolder = @"C:\Temp";
+            Directory.CreateDirectory(tempFolder);
+            File.Create(@"C:\Temp\refresh.signal").Dispose();
+
         }
+        static int currentPage = 1;
+        const int booksPerPage = 10;
+
+        private static void ShowBooksPage()
+        {
+            var totalBooks = logic.GetAllBooks().Count;
+            var totalPages = (int)Math.Ceiling(totalBooks / (double)booksPerPage);
+
+            while (true)
+            {
+                Console.Clear();
+                var books = logic.GetBooksPage(currentPage, booksPerPage);
+                Console.WriteLine($"=== Страница {currentPage} из {totalPages} ===");
+                foreach (var book in books)
+                {
+                    Console.WriteLine(book);
+                }
+                Console.WriteLine("\n[n] - следующая, [p] - предыдущая, [0] - выход");
+                var key = Console.ReadKey(true).KeyChar;
+                if (key == 'n' && currentPage < totalPages) currentPage++;
+                else if (key == 'p' && currentPage > 1) currentPage--;
+                else if (key == '0') break;
+            }
+        }
+
 
         private static void AddBook()
         {
@@ -120,6 +150,9 @@ namespace BookLibrary.ConsoleApp
 
             var result = logic.CreateBook(title, author, year, genre);
             Console.WriteLine(result.Message);
+            string tempFolder = @"C:\Temp";
+            Directory.CreateDirectory(tempFolder);
+            File.Create(@"C:\Temp\refresh.signal").Dispose();
         }
 
         private static string SelectGenre()
@@ -185,6 +218,9 @@ namespace BookLibrary.ConsoleApp
             if (logic.UpdateBook(id, title, author, year, genre))
             {
                 Console.WriteLine("Книга обновлена!");
+                string tempFolder = @"C:\Temp";
+                Directory.CreateDirectory(tempFolder);
+                File.Create(@"C:\Temp\refresh.signal").Dispose();
             }
             else
             {
@@ -204,6 +240,9 @@ namespace BookLibrary.ConsoleApp
             if (logic.DeleteBook(id))
             {
                 Console.WriteLine("Книга удалена!");
+                string tempFolder = @"C:\Temp";
+                Directory.CreateDirectory(tempFolder);
+                File.Create(@"C:\Temp\refresh.signal").Dispose();
             }
             else
             {

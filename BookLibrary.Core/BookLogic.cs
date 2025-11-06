@@ -63,6 +63,14 @@ namespace BookLibrary.Core
                 book.Year == year &&
                 string.Equals(book.Genre, genre, StringComparison.OrdinalIgnoreCase));
         }
+        public List<Book> GetBooksPage(int page, int pageSize)
+        {
+            return _repository.ReadAll()
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
+
 
         public List<Book> GetBooksByAuthor(string author)
         {
