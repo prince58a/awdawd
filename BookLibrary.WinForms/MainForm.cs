@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Media;
+using System.Reflection.Emit;
 using System.Windows.Forms;
 
 namespace BookLibrary.WinForms
@@ -16,6 +17,7 @@ namespace BookLibrary.WinForms
         private readonly BookLogic logic;
         private readonly IRepository<Genre> genreRepo;
         private SoundPlayer soundPlayer;
+        private SoundPlayer hellyeahSound;
         private int currentPage = 1;
         private int booksPerPage = 10;
         private int totalPages = 1;
@@ -239,6 +241,31 @@ namespace BookLibrary.WinForms
 
             OpenGifWindow();
         }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            PlayHELLYEAHSound();
+            BackgroundImage = Properties.Resources.HELLYEAH;
+            button1.Image = Properties.Resources.HELLYEAH;
+            label4.Image = Properties.Resources.HELLYEAH;
+            add.Image = Properties.Resources.HELLYEAH;
+            del.Image = Properties.Resources.HELLYEAH;
+            edit.Image = Properties.Resources.HELLYEAH;
+            author.Image = Properties.Resources.HELLYEAH;
+            genre.Image = Properties.Resources.HELLYEAH;
+            year.Image = Properties.Resources.HELLYEAH;
+            searchByIdButton.Image = Properties.Resources.HELLYEAH;
+            resetSearchButton.Image = Properties.Resources.HELLYEAH;
+            label1.Image = Properties.Resources.HELLYEAH;
+            label2.Image = Properties.Resources.HELLYEAH;
+            label3.Image = Properties.Resources.HELLYEAH;
+            pictureBox1.Image = Properties.Resources.HELLYEAH;
+            btnPrevPage.Image = Properties.Resources.HELLYEAH;
+            btnNextPage.Image = Properties.Resources.HELLYEAH;
+            labelPageInfo.Image = Properties.Resources.HELLYEAH;
+            //BackgroundImageLayout = ImageLayout.Stretch; // или Zoom, Tile, Center, None
+
+            //Thread.Sleep(16000);
+        }
 
         #endregion
 
@@ -340,7 +367,27 @@ namespace BookLibrary.WinForms
         {
             idSearchTextBox.Text = "";
             LoadPaginatedBooks();
+
+            BackgroundImage = null;
+            button1.Image = null;
+            label4.Image = null;
+            add.Image = null;
+            del.Image = null;
+            edit.Image = null;
+            author.Image = null;
+            genre.Image = null;
+            year.Image = null;
+            searchByIdButton.Image = null;
+            resetSearchButton.Image = null;
+            label1.Image = null;
+            label2.Image = null;
+            label3.Image = null;
+            pictureBox1.Image = Properties.Resources.jhoe;
+            btnPrevPage.Image = null;
+            btnNextPage.Image = null;
+            labelPageInfo.Image = null;
         }
+
 
 
         /// <summary>
@@ -351,6 +398,7 @@ namespace BookLibrary.WinForms
             try
             {
                 soundPlayer = new SoundPlayer(@"Files\sound.wav");
+                hellyeahSound = new SoundPlayer(@"Files\HELL YEAH.wav");
             }
             catch (Exception ex)
             {
@@ -370,6 +418,18 @@ namespace BookLibrary.WinForms
             }
         }
 
+        private void PlayHELLYEAHSound()
+        {
+            try
+            {
+                hellyeahSound?.Play();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка воспроизведения звука: {ex.Message}");
+            }
+        }
+
         private void OpenGifWindow()
         {
             GifForm gifForm = new GifForm();
@@ -377,5 +437,6 @@ namespace BookLibrary.WinForms
             gifForm.Show(); // Немодальное окно
         }
         #endregion
+
     }
 }

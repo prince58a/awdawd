@@ -39,7 +39,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            
             dataGridView1 = new DataGridView();
             add = new Button();
             del = new Button();
@@ -61,6 +60,7 @@
             btnNextPage = new Button();
             labelPageInfo = new Label();
             label4 = new Label();
+            button1 = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
@@ -293,11 +293,23 @@
             label4.TabIndex = 18;
             label4.Text = "Какой же он крутой, я не могу";
             // 
+            // button1
+            // 
+            button1.Font = new Font("Segoe UI", 14F);
+            button1.Location = new Point(20, 411);
+            button1.Name = "button1";
+            button1.Size = new Size(255, 79);
+            button1.TabIndex = 23;
+            button1.Text = "HELL YEAH \U0001f985\U0001f985\U0001f985\U0001f985\U0001f985\U0001f985\U0001f985\U0001f985\U0001f985\U0001f985\U0001f985\U0001f985\U0001f985";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(680, 496);
+            Controls.Add(button1);
             Controls.Add(label4);
             Controls.Add(pictureBox1);
             Controls.Add(label3);
@@ -373,7 +385,7 @@
         }
 
         private Label label4;
-        
+        private Button button1;
     }
 
 }
