@@ -45,7 +45,7 @@ namespace BookLibrary.Core
             Name = name;
         }
 
-        public override string ToString() => $"{Id}: {Name}";
+        public override string ToString() => $"{Name}";
     }
 
 }

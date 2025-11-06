@@ -15,6 +15,9 @@ namespace BookLibrary.WinForms
         private readonly BookLogic logic;
         private readonly IRepository<Genre> genreRepo;
         private SoundPlayer soundPlayer;
+        private int currentPage = 1;
+        private int booksPerPage = 10;
+        private int totalPages = 1;
 
 
         public MainForm()
@@ -53,8 +56,6 @@ namespace BookLibrary.WinForms
             }
         }
 
-
-
         private void BtnNextPage_Click(object sender, EventArgs e)
         {
             if (currentPage < totalPages)
@@ -73,7 +74,6 @@ namespace BookLibrary.WinForms
             }
         }
 
-
         private void StartFileFlagListener()
         {
             Task.Run(() =>
@@ -91,10 +91,6 @@ namespace BookLibrary.WinForms
             });
         }
 
-        private int currentPage = 1;
-        private int booksPerPage = 10;
-        private int totalPages = 1;
-
         private void LoadPaginatedBooks()
         {
             var booksList = logic.GetAllBooks();
@@ -105,59 +101,10 @@ namespace BookLibrary.WinForms
                 .ToList();
             dataGridView1.DataSource = booksPage;
             labelPageInfo.Text = $"Страница {currentPage} из {totalPages}";
-        }
 
-
-        // На кнопках вперёд/назад увеличивать/уменьшать currentPage и вызывать LoadPaginatedBooks.
-
-
-        private static IRepository<Book> CreateRepository(string repositoryType)
-        {
-            var dataFolder = Path.Combine(@"C:\Users\egorg\Documents\GitHub", "awdawd"); 
-            Directory.CreateDirectory(dataFolder);
-
-            var dbPath = Path.Combine(dataFolder, "BookLibrary.db");
-            var connectionString = $"Data Source={dbPath}";
-
-            if (repositoryType == "EF")
-            {
-                var context = new BookDbContext(dbPath);
-                return new EntityRepository(context);
-            }
-            else if (repositoryType == "Dapper")
-            {
-                return new DapperRepository(connectionString);
-            }
-            else
-            {
-                throw new ArgumentException("Неизвестный тип репозитория");
-            }
-        }
-
-        private void Repository_DataChanged(object sender, EventArgs e)
-        {
-            if (this.InvokeRequired)
-            {
-                this.Invoke(new Action(LoadBooks));
-            }
-            else
-            {
-                LoadPaginatedBooks();
-            }
-        }
-
-        protected override void OnFormClosed(FormClosedEventArgs e)
-        {
-            base.OnFormClosed(e);
-        }
-
-        private void LoadBooks()
-        {
-            var books = logic.GetAllBooks();
-            dataGridView1.DataSource = books;
             LoadAuthors();
-            LoadGenres();
             LoadYears();
+            LoadGenres();
         }
 
         private void BtnADD_Click(object sender, EventArgs e)
@@ -173,7 +120,7 @@ namespace BookLibrary.WinForms
                 }
                 else
                 {
-                    LoadBooks();
+                    LoadPaginatedBooks();
                 }
             }
         }
@@ -187,7 +134,6 @@ namespace BookLibrary.WinForms
                 return;
             }
 
-            // получаем Id из выбранной строки
             var id = (int)dataGridView1.SelectedRows[0].Cells["Id"].Value;
             var book = logic.GetBook(id);
             var genres = logic.GetAvailableGenres().ToArray();
@@ -196,7 +142,7 @@ namespace BookLibrary.WinForms
             if (form.ShowDialog() == DialogResult.OK)
             {
                 logic.UpdateBook(book.Id, form.BookTitle, form.BookAuthor, form.BookYear, form.BookGenreId);
-                LoadBooks();
+                LoadPaginatedBooks();
             }
         }
 
@@ -230,7 +176,6 @@ namespace BookLibrary.WinForms
                     "Приключения","Научная литература","Биография","Поэзия","Роман-антиутопия" };
 
             var genre = GenereSearchComboBox.SelectedItem.ToString();
-
             int genreId = kostil.IndexOf(genre);
             var books = logic.GetBooksByGenre(genreId);
 
@@ -242,7 +187,7 @@ namespace BookLibrary.WinForms
 
             var result = string.Join("\n", books.Select(b => b.ToString()));
             MessageBox.Show(result, $"Книги жанра {genre}");
-            LoadBooks();
+            LoadPaginatedBooks();
         }
 
         private void BtnSORTAuthor_Click(object sender, EventArgs e)
@@ -264,7 +209,7 @@ namespace BookLibrary.WinForms
 
             var result = string.Join("\n", books.Select(b => b.ToString()));
             MessageBox.Show(result, $"Книги автора {author}");
-            LoadBooks();
+            LoadPaginatedBooks();
         }
 
         private void BtnSORTYear_Click(object sender, EventArgs e)
@@ -286,7 +231,7 @@ namespace BookLibrary.WinForms
 
             var result = string.Join("\n", books.Select(b => b.ToString()));
             MessageBox.Show(result, $"Книги вышедшие после {year} года");
-            LoadBooks();
+            LoadPaginatedBooks();
         }
 
         private void LoadAuthors()
@@ -307,7 +252,7 @@ namespace BookLibrary.WinForms
         private void LoadGenres()
         {
             var genres = logic.GetAllBooks()
-                .Select(b => b.Genre)
+                .Select(b => b.Genre.Name)
                 .Distinct()
                 .OrderBy(a => a)
                 .ToArray();
@@ -337,16 +282,12 @@ namespace BookLibrary.WinForms
         private void BtnSearchById_Click(object sender, EventArgs e)
         {
             SearchBookById();
-            LoadPaginatedBooks();
         }
 
         private void BtnResetSearch_Click(object sender, EventArgs e)
         {
             ResetSearch();
-            LoadPaginatedBooks();
         }
-
-
 
         private void SearchBookById()
         {
@@ -374,13 +315,12 @@ namespace BookLibrary.WinForms
             dataGridView1.DataSource = new List<Book> { book };
             if (dataGridView1.Rows.Count > 0)
                 dataGridView1.Rows[0].Selected = true;
-            LoadBooks();
         }
 
         private void ResetSearch()
         {
             idSearchTextBox.Text = "";
-            LoadBooks();
+            LoadPaginatedBooks();
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -419,11 +359,6 @@ namespace BookLibrary.WinForms
             GifForm gifForm = new GifForm();
             //gifForm.ShowDialog(); // Модальное окно
             gifForm.Show(); // Немодальное окно
-        }
-
-        private void update_Click(object sender, EventArgs e)
-        {
-            LoadBooks();
         }
     }
 }
