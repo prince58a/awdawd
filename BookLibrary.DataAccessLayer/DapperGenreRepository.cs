@@ -15,6 +15,20 @@ namespace BookLibrary.DataAccessLayer
             _connectionString = connectionString;
             InitializeDatabase();
         }
+        public List<Genre> GetBooksPage(int page, int pageSize)
+        {
+            using var db = new SqliteConnection(_connectionString);
+            string sql = "SELECT * FROM Genres ORDER BY Id LIMIT @PageSize OFFSET @Offset";
+            return db.Query<Genre>(sql, new { PageSize = pageSize, Offset = (page - 1) * pageSize }).ToList();
+            // Для EF:
+            // return _context.Genres.OrderBy(g => g.Id).Skip((page-1)*pageSize).Take(pageSize).ToList();
+        }
+        public int GetBooksCount()
+        {
+            using var db = new SqliteConnection(_connectionString);
+            string sql = "SELECT COUNT(*) FROM Genres";
+            return db.ExecuteScalar<int>(sql);
+        }
 
         private void InitializeDatabase()
         {

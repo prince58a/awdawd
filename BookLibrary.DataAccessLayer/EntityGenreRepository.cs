@@ -12,6 +12,15 @@ namespace BookLibrary.DataAccessLayer
             _context = context;
             _context.InitializeDatabase();
         }
+        public List<Genre> GetBooksPage(int page, int pageSize)
+        {
+            return _context.Genres.OrderBy(g => g.Id).Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        }
+        public int GetBooksCount()
+        {
+            return _context.Genres.Count();
+        }
+
 
         public void Add(Genre item)
         {

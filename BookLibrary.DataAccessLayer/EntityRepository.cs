@@ -8,6 +8,19 @@ namespace BookLibrary.DataAccessLayer
     public class EntityRepository : IRepository<Book>
     {
         private readonly BookDbContext _context;
+        public List<Book> GetBooksPage(int page, int pageSize)
+        {
+            return _context.Books
+                .OrderBy(b => b.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Include(b => b.Genre)
+                .ToList();
+        }
+        public int GetBooksCount()
+        {
+            return _context.Books.Count();
+        }
 
         public EntityRepository(BookDbContext context)
         {

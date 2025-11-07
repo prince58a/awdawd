@@ -70,13 +70,6 @@ namespace BookLibrary.Core
                 book.Year == year &&
                 book.GenreId == genreId);
         }
-        public List<Book> GetBooksPage(int page, int pageSize)
-        {
-            return _bookRepository.ReadAll()
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
-        }
         public List<Book> GetBooksByAuthor(string author)
         {
             return _bookRepository.ReadAll().Where(b => b.Author.Equals(author, StringComparison.OrdinalIgnoreCase)).ToList();
@@ -98,5 +91,11 @@ namespace BookLibrary.Core
         {
             return _bookRepository.ReadAll().Where(b => b.Year >= year).OrderBy(b => b.Year).ToList();
         }
+        public List<Book> GetBooksPage(int page, int pageSize)
+    => _bookRepository.GetBooksPage(page, pageSize);
+
+        public int GetBooksCount()
+            => _bookRepository.GetBooksCount();
+
     }
 }

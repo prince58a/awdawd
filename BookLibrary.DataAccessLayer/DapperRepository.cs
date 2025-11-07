@@ -11,6 +11,18 @@ namespace BookLibrary.DataAccessLayer
     public class DapperRepository : IRepository<Book>
     {
         private readonly string _connectionString;
+        public List<Book> GetBooksPage(int page, int pageSize)
+        {
+            string sql = "SELECT * FROM Books ORDER BY Id LIMIT @PageSize OFFSET @Offset";
+            using IDbConnection db = new SqliteConnection(_connectionString);
+            return db.Query<Book>(sql, new { PageSize = pageSize, Offset = (page - 1) * pageSize }).ToList();
+        }
+        public int GetBooksCount()
+        {
+            string sql = "SELECT COUNT(*) FROM Books";
+            using IDbConnection db = new SqliteConnection(_connectionString);
+            return db.ExecuteScalar<int>(sql);
+        }
 
         public DapperRepository(string connectionString)
         {

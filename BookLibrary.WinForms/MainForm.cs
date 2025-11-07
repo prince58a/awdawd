@@ -41,7 +41,7 @@ namespace BookLibrary.WinForms
         /// </summary>
         private static (IRepository<Book>, IRepository<Genre>) CreateRepositories(string repositoryType)
         {
-            var dataFolder = Path.Combine(@"C:\Users\Gosha\Documents\GitHub", "awdawd");                     //ПОМЕНЯТЬ ПУТЬ!!!!!!!
+            var dataFolder = Path.Combine(@"C:\Users\egorg\Documents\GitHub", "awdawd");                     //ПОМЕНЯТЬ ПУТЬ!!!!!!!
             Directory.CreateDirectory(dataFolder);
 
             var dbPath = Path.Combine(dataFolder, "BookLibrary.db");
@@ -276,18 +276,17 @@ namespace BookLibrary.WinForms
         /// </summary>
         private void LoadPaginatedBooks()
         {
-            var booksList = logic.GetAllBooks();
-            totalPages = (int)Math.Ceiling(booksList.Count / (double)booksPerPage);
-            var booksPage = booksList
-                .Skip((currentPage - 1) * booksPerPage)
-                .Take(booksPerPage)
-                .ToList();
+            var booksPage = logic.GetBooksPage(currentPage, booksPerPage);
+            int totalBooks = logic.GetBooksCount();
+            totalPages = (int)Math.Ceiling(totalBooks / (double)booksPerPage);
+
             dataGridView1.DataSource = booksPage;
             labelPageInfo.Text = $"Страница {currentPage} из {totalPages}";
 
             LoadAuthors();
             LoadYears();
             LoadGenres();
+
         }
 
         private void LoadAuthors()

@@ -9,5 +9,8 @@ namespace BookLibrary.Core
         IEnumerable<T> ReadAll();
         T ReadById(int id);
         bool Update(T item);
+        List<T> GetBooksPage(int page, int pageSize);
+        int GetBooksCount();
+
     }
 }
