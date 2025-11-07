@@ -41,7 +41,7 @@ namespace BookLibrary.WinForms
         /// </summary>
         private static (IRepository<Book>, IRepository<Genre>) CreateRepositories(string repositoryType)
         {
-            var dataFolder = Path.Combine(@"C:\Users\dshel\Документы", "awdawd");                     //ПОМЕНЯТЬ ПУТЬ!!!!!!!
+            var dataFolder = Path.Combine(@"C:\Users\Gosha\Documents\GitHub", "awdawd");                     //ПОМЕНЯТЬ ПУТЬ!!!!!!!
             Directory.CreateDirectory(dataFolder);
 
             var dbPath = Path.Combine(dataFolder, "BookLibrary.db");
@@ -164,8 +164,8 @@ namespace BookLibrary.WinForms
                 return;
             }
 
-            List<string> kostil = new List<string> { "Фантастика","Детектив","Роман","Фэнтези","Ужасы",
-                    "Приключения","Научная литература","Биография","Поэзия","Роман-антиутопия" };
+            List<string> kostil = new List<string> { "Биография","Детектив","Научная литература","Фэнтези","Поэзия",
+                    "Приключения","Роман","Роман-антиутопия","Ужасы","Фантастика" };
 
             var genre = GenereSearchComboBox.SelectedItem.ToString();
             int genreId = kostil.IndexOf(genre) + 1;
