@@ -43,7 +43,7 @@ namespace BookLibrary.DataAccessLayer
                 var createSql = @"
                     CREATE TABLE Genres (
                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        Name TEXT NOT NULL UNIQUE
+                        Name TEXT NOT NULL
                     )";
                 connection.Execute(createSql);
 
