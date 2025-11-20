@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-
 namespace BookLibrary.Core
 {
     public interface IRepository<T> where T : IDomainObject
@@ -11,6 +10,5 @@ namespace BookLibrary.Core
         bool Update(T item);
         List<T> GetBooksPage(int page, int pageSize);
         int GetBooksCount();
-
     }
 }

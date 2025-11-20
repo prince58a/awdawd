@@ -8,6 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Ninject" Version="3.3.6" />
 		<PackageReference Include="System.Text.Json" Version="9.0.9" />
 	</ItemGroup>
 

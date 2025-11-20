@@ -8,6 +8,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="Ninject" Version="3.3.6" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\BookLibrary.Core\BookLibrary.Core.csproj" />
 		<ProjectReference Include="..\BookLibrary.DataAccessLayer\BookLibrary.DataAccessLayer.csproj" />
 	</ItemGroup>

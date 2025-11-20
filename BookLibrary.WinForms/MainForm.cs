@@ -9,6 +9,7 @@ using System.Linq;
 using System.Media;
 using System.Reflection.Emit;
 using System.Windows.Forms;
+using Ninject;
 
 namespace BookLibrary.WinForms
 {
@@ -25,15 +26,14 @@ namespace BookLibrary.WinForms
 
         public MainForm()
         {
-            var (bookRepo, gRepo) = CreateRepositories("Dapper"); // "Dapper" или "EF"
-            genreRepo = gRepo;
-            logic = new BookLogic(bookRepo, genreRepo);
+            IKernel ninjectKernel = new StandardKernel(new SimpleConfigModule());
+            logic = ninjectKernel.Get<BookLogic>();
+            genreRepo = ninjectKernel.Get<IRepository<Genre>>();
 
             InitializeComponent();
             LoadPaginatedBooks();
             InitializeSound();
             StartFileFlagListener();
-
         }
 
         /// <summary>

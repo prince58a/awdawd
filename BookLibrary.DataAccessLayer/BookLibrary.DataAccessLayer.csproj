@@ -12,6 +12,7 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0" />
 		<PackageReference Include="Dapper" Version="2.1.24" />
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0" />
+		<PackageReference Include="Ninject" Version="3.3.6" />
 	</ItemGroup>
 
 	<ItemGroup>

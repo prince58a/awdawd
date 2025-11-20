@@ -1,5 +1,6 @@
 ﻿using BookLibrary.Core;
 using BookLibrary.DataAccessLayer;
+using Ninject;
 using System;
 using System.IO;
 
@@ -14,8 +15,8 @@ namespace BookLibrary.ConsoleApp
 
         static void Main(string[] args)
         {
-            var (bookRepo, genreRepo) = CreateRepositories("Dapper"); // или "EF"
-            logic = new BookLogic(bookRepo, genreRepo);
+            IKernel ninjectKernel = new StandardKernel(new SimpleConfigModule());
+            logic = ninjectKernel.Get<BookLogic>();
 
             while (true)
             {
