@@ -6,7 +6,8 @@ public class SimpleConfigModule : NinjectModule
 {
     public override void Load()
     {
-        string dbPath = Path.Combine("C:\\Users\\dshel\\Документы\\awdawd\\BookLibrary.db");
+
+        string dbPath = Path.Combine("C:\\Users\\Gosha\\Documents\\GitHub\\awdawd\\BookLibrary.db");
         Bind<BookDbContext>().ToSelf().InSingletonScope().WithConstructorArgument("dbPath", dbPath);
 
         // Привязка репозитория книг к реализации EntityRepository

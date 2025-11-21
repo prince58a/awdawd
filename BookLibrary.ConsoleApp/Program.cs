@@ -44,7 +44,7 @@ namespace BookLibrary.ConsoleApp
                     case "5": SearchByAuthor(); break;
                     case "6": GroupByGenre(); break;
                     case "7": ShowBooksAfterYear(); break;
-                    case "0": Environment.Exit(0); break;
+                    case "0": Exit(); break;
                     default: Console.WriteLine("Неверный выбор!"); break;
                 }
 
@@ -52,7 +52,162 @@ namespace BookLibrary.ConsoleApp
                 Console.ReadKey();
             }
         }
+        private static void Exit()
+        {
+            string[][] frames = {
+            new string[] { "Сохранение.",
+                "           _.,._",
+                "        ,d$$$$$SSIi.",
+                "      ,$$$SSSS$$SSIi:.",
+                "     j$$$$SSSS$$$SIIi·.",
+                "     S$$$$SS$$$$$SSIi·.",
+                "    j?*`‾`?S$SI7”`“?IL:.",
+                "    ?:     $$S?     `?i’",
+                "    iL    j$?$L      I7",
+                "    $$$b%d$’  `$b,__d$:",
+                "    ?SSIiS?    S$?I?$SI",
+                "     ‾`?IS$L_,d$SIi:`^’",
+                "        ?$$$SS$SIi’",
+                "        j:?i:i?·•:",
+                "        ”` `^"},
+            new string[] { "Сохранение..",
+                "           _.,,._",
+                "        ,d$$$$$SSIi:",
+                "      ,$$$SSSS$$$S$Ii::",
+                "     d$$$$SSSS$$$$SSiiI:.",
+                "    j$$$$SS$$$$$SSSi:iII:.",
+                "   j°`^?SSI7°”^?IL:iiISIi:",
+                "   ?   :$I?     ?$:iIS$I:·",
+                "  jL _,$?$L     j7b:iISi:",
+                "  ?$d$’  `$b,_,d$$$:iIi?",
+                "  i$$:    S$?I?$$$S%u.?’",
+                "   ‾?L_,d$SIi:`^?S?^` ’",
+                "    I$$$S$$SIi’",
+                "    :i?i:i?·i·",
+                "        ”` `^"},
+            new string[] { "Сохранение...",
+                "           _.,,._",
+                "      _,d$$$$$$SSIi:,_",
+                "    ,d$$$$$$$S$$$SSISi:.",
+                "   ,$$$$$SSSS$$$$SIISSIi:.",
+                "  J$$$$SS$$$$$$SIISS$$SIi:",
+                " .”I7‾`°^$$iI$SiIS$$$$SiI:",
+                " `·jI    `?L:iIIS$$$$SII:·",
+                " ,°$$·    j$b:iIS$$S?II:·",
+                " ? i$L,_.d$d$:ijSSSIiSi:·",
+                " i.j$S?S$$$$S%u,°?iISi::·",
+                ",d$$SIi?°?$S?°`   ‾`‾.:’",
+                "i$$$S$$k. ‾       ··’",
+                "·?i:·i?·^",
+                ""},
+            new string[] { "Сохранение.",
+                "           _.,,,._",
+                "      .,oS$$$$$$$SSi:,_",
+                "     d$$S$$$$S$$$$SSSIi:.",
+                "   j$S$$$$$S$$S$$$$$$SIi::",
+                "  d$$$$$$SS$$$$$$$S$$SSIi:.",
+                " j$7iIS$$$$S$$$$$$IS$$SIi::",
+                "d$7:j$$Siid$$$$$$SS$$$Si::",
+                "?7·j$$Siid$$$$$$SS$$$S7i::·",
+                "j:·?$Iiid$$$$SIS$$$SSSIi::",
+                "$k,_`$IS$$$$SIIS$$$SSIii:·",
+                "?’'  ‾`°^$S?^::::iISSii::",
+                " k.·:’   I7    ··::::::··",
+                " ``      ”’`",
+                ""},
+            new string[] { "Сохранение..",
+                "          _.,,._",
+                "       ,d$$$$$SSIi:,",
+                "    ,d$S$$$$$$$$SSIi:.",
+                "   dS$$$$$S$$S$$$$$SIk.",
+                "  iS$$$$SS$$$$$$$$$$SIi",
+                "  IS$$$$$S$$$$$$$$$SIi:",
+                "  SS$$$$$7S$$$$$S$$SIi·",
+                "  ?$$$$$7jSS$$$$S$SIi:",
+                "  ji$$S7j$Si?S$$SSIi:·",
+                "  ?$IuiU$$$Ski?S7Ii:·’",
+                "   ?||Sbp.`°^?S$7’:i:·",
+                "   ? ”‾ ·:::· ·::··",
+                "",
+                ""},
+            new string[] { "Сохранение...",
+                "          _.,,._",
+                "      ,dS$$$$$SSii:,",
+                "   ,dS$S$$$$$$$$$$SIi:,",
+                "  dIS$$$$$$$$$$$$$$SSSik",
+                " jIS$$$$$$$$$$$$$$$$SIiiL",
+                "·IIS$$$$$S$$$$$$$$$$SI:?$",
+                ":iS$$$$$$7S$$$$SS$$SIii:?k",
+                ":iS$$$$$7jIS$$$$SS$SIS::·?",
+                "·iIS$$S7j$SI?S$$$SSii7 · L",
+                " :iS$SSi$$$SL`?S$SIi?_.o$$",
+                "  ?ISi7 `°^?Sb,`^°’‾`  _`”",
+                "   ”?°’··:::·`?S$i’    :",
+                "           ··  `?’",
+                ""},
+            new string[] { "Сохранение.",
+                "          _.,,._",
+                "     _,dS$$$$$SSIi:,",
+                "   ,dS$S$$$$$$$$SSSIi:.",
+                "  dIS$$$$$$$$$$$$$SSSSIk",
+                " dIS$$$$$$$$$$$$$$$SSSiiL",
+                "iISS$$$$SS$$$$$$$$$SSIi?$k",
+                "SiSS$$S$SSS$$$$S$$SSIIi:S?",
+                "iiS$$$$ISSIS$$$$SSSIIi?·j.",
+                ":iIS$SIIS$SI?S$$SIIii7’jI$:",
+                " :iISSiiiS$SLi?SI?°’,od$S$",
+                "  ·:iSi:?S$SI?’^°’‾`^°^?Sk",
+                "    `°^.:?S$Si     ·::iI$$",
+                "          `°^’       ”.^:’",
+                ""},
+            new string[] { "Сохранение..",
+                "          _.,,,._",
+                "      _,d$$$$$$S$Sik,",
+                "    ,i$$S$$$$$$$$SSSIk:",
+                "   dISS$$$$$$$SS$$$$SSIk",
+                "  jIS$$$$$$$$$SIIS$$$SSIk",
+                "  SSS$$$$SS$$SSIIi$$S7°??k",
+                "  ?SS$$$$$SSSIi::d$’   :?",
+                "  :SS$$$$$SSIi::j$S    j$7",
+                "   ?IS$$SSIi::.,?$$$up%?$’",
+                "    ?IIib,‾`°”?S$$^°‾,d$’",
+                "     `°?$?’    `?^k.:iIS$k.",
+                "        °’        `?.:iI$$i",
+                "                   ” ”^ ^ ’",
+                ""},
+            new string[] {"Сохранение...",
+                "          _.,,._",
+                "      _,d$$$$$$$$b.",
+                "    ,d$S$$$$S$$$$SSb.",
+                "   dSS$SIS$$$$$$$$$SIb",
+                "  jIS$$SII$$$$$$$$$SS$k",
+                "  SI$$IIiid$$S?iI$$$S7^k.",
+                " :iS$IIi:j7’     ?$S?   i",
+                " ·iSSI:::$$      j$$L   ?",
+                "  :?i:.,d$$k,_.,d$$7‾?p,$",
+                "   iI:`^?$$$S?I?$$7   $$?",
+                "    ?:.  ?S$$SII$$L.,J$”’",
+                "     `    ‾  :IS$S$$$Sk",
+                "             ·:i?i:?:·?",
+                "                  ”` `"}
+            };
+            int currentFrame = 0;
+            for (int i = 0; i < 45; i++)
+            {
+                Console.Clear();
+                foreach (string line in frames[currentFrame])
+                {
+                    Console.WriteLine(line);
+                }
+                currentFrame = (currentFrame + 1) % frames.Length;
 
+                Thread.Sleep(100);
+            }
+            Console.Clear();
+            Console.WriteLine("Непредвиденная ошибка :(");
+            Thread.Sleep(100);
+            Environment.Exit(0);
+        }
         private static (IRepository<Book>, IRepository<Genre>) CreateRepositories(string repositoryType)
         {
             var dataFolder = Path.Combine(@"C:\Users\egorg\Documents\GitHub", "awdawd");

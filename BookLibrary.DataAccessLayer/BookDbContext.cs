@@ -39,16 +39,16 @@ namespace BookLibrary.DataAccessLayer
             });
 
             modelBuilder.Entity<Genre>().HasData(
-                new Genre(1, "Фантастика"),
+                new Genre(1, "Биография"),
                 new Genre(2, "Детектив"),
-                new Genre(3, "Роман"),
-                new Genre(4, "Фэнтези"),
-                new Genre(5, "Ужасы"),
-                new Genre(6, "Приключения"),
-                new Genre(7, "Научная литература"),
-                new Genre(8, "Биография"),
-                new Genre(9, "Поэзия"),
-                new Genre(10, "Роман-антиутопия")
+                new Genre(3, "Научная литература"),
+                new Genre(4, "Поэзия"),
+                new Genre(5, "Приключения"),
+                new Genre(6, "Роман"),
+                new Genre(7, "Роман-антиутопия"),
+                new Genre(8, "Ужасы"),
+                new Genre(9, "Фантастика"),
+                new Genre(10, "Фэнтези")
             );
         }
 
