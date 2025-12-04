@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace BookLibrary.Core
 {
@@ -13,8 +9,12 @@ namespace BookLibrary.Core
 
         void CreateBook(string title, string author, int year, int genreId,
                         out string message, out bool success);
+
         void UpdateBook(int id, string title, string author, int year, int genreId,
                         out string message, out bool success);
+
         void DeleteBook(int id, out string message, out bool success);
+
+        IEnumerable<Genre> GetAvailableGenres();
     }
 }

@@ -29,7 +29,7 @@ namespace BookLibrary.WinForms
 
             _presenter = new BookPresenter(this, model);
 
-            // Привязка UI‑событий к событиям View
+            // Привязка UI‑событий к событиям View (MVP)
             add.Click += (s, e) => AddBookRequested?.Invoke(this, EventArgs.Empty);
             edit.Click += (s, e) => EditBookRequested?.Invoke(this, EventArgs.Empty);
             del.Click += (s, e) => DeleteBookRequested?.Invoke(this, EventArgs.Empty);
@@ -45,7 +45,7 @@ namespace BookLibrary.WinForms
             button1.Click += button1_Click;
         }
 
-        // ======== IBookView: данные от пользователя ========
+        // ================= IBookView: данные от пользователя =================
 
         public int? SelectedBookId =>
             dataGridView1.SelectedRows.Count > 0
@@ -54,7 +54,7 @@ namespace BookLibrary.WinForms
 
         public string SearchIdText => idSearchTextBox.Text.Trim();
 
-        // ======== IBookView: события ========
+        // ================= IBookView: события =================
 
         public event EventHandler AddBookRequested;
         public event EventHandler EditBookRequested;
@@ -64,7 +64,7 @@ namespace BookLibrary.WinForms
         public event EventHandler NextPageRequested;
         public event EventHandler PrevPageRequested;
 
-        // ======== IBookView: вывод ========
+        // ================= IBookView: вывод =================
 
         public void ShowBooks(IEnumerable<Book> books)
         {
@@ -81,7 +81,41 @@ namespace BookLibrary.WinForms
             labelPageInfo.Text = $"Страница {currentPage} из {totalPages}";
         }
 
-        // ======== Остальной UI‑код (звук, гифка, флаг‑файл) ========
+        // Диалог добавления/редактирования книги.
+        // existing == null -> создание новой книги.
+        public Book? ShowBookDialog(Book? existing, IEnumerable<Genre> availableGenres)
+        {
+            var genresArray = availableGenres.ToArray();
+
+            BookForm form;
+
+            if (existing == null)
+            {
+                // конструктор BookForm(Genre[] genres)
+                form = new BookForm(genresArray);
+            }
+            else
+            {
+                // конструктор BookForm(Book book, Genre[] genres)
+                form = new BookForm(existing, genresArray);
+            }
+
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                return new Book
+                {
+                    Id = existing?.Id ?? 0,
+                    Title = form.BookTitle,
+                    Author = form.BookAuthor,
+                    Year = form.BookYear,
+                    GenreId = form.BookGenreId
+                };
+            }
+
+            return null;
+        }
+
+        // ================= Прочий UI‑код (звук, гифка, флаг‑файл) =================
 
         private void StartFileFlagListener()
         {
@@ -94,7 +128,6 @@ namespace BookLibrary.WinForms
                     {
                         this.Invoke(new Action(() =>
                         {
-                            // просто просим презентер обновить страницу
                             ResetSearchRequested?.Invoke(this, EventArgs.Empty);
                         }));
                         System.IO.File.Delete(flagPath);

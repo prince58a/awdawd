@@ -12,6 +12,8 @@ namespace BookLibrary.Core
         void ShowMessage(string message);
         void UpdatePageInfo(int currentPage, int totalPages);
 
+        Book? ShowBookDialog(Book? existing, IEnumerable<Genre> availableGenres);
+
         event EventHandler AddBookRequested;
         event EventHandler EditBookRequested;
         event EventHandler DeleteBookRequested;

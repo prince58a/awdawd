@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System;
 using System.Linq;
 
 namespace BookLibrary.Core
@@ -42,63 +37,99 @@ namespace BookLibrary.Core
             _view.UpdatePageInfo(_currentPage, totalPages);
         }
 
-        private void OnNextPageRequested(object? s, EventArgs e)
+        private void OnNextPageRequested(object? sender, EventArgs e)
         {
             _currentPage++;
             LoadPage();
         }
 
-        private void OnPrevPageRequested(object? s, EventArgs e)
+        private void OnPrevPageRequested(object? sender, EventArgs e)
         {
             if (_currentPage > 1)
+            {
                 _currentPage--;
-            LoadPage();
+                LoadPage();
+            }
         }
 
-        private void OnSearchByIdRequested(object? s, EventArgs e)
+        private void OnSearchByIdRequested(object? sender, EventArgs e)
         {
-            if (!int.TryParse(_view.SearchIdText, out var id))
+            if (!int.TryParse(_view.SearchIdText, out var id) || id <= 0)
             {
-                _view.ShowMessage("Некорректный ID");
+                _view.ShowMessage("ID должен быть положительным числом!");
                 return;
             }
 
             var book = _model.GetBook(id);
             if (book == null)
             {
-                _view.ShowMessage($"Книга с ID {id} не найдена");
+                _view.ShowMessage($"Книга с ID {id} не найдена!");
                 return;
             }
 
             _view.ShowBooks(new[] { book });
         }
 
-        private void OnResetSearchRequested(object? s, EventArgs e)
+        private void OnResetSearchRequested(object? sender, EventArgs e)
         {
             LoadPage();
         }
 
-        private void OnDeleteBookRequested(object? s, EventArgs e)
+        private void OnDeleteBookRequested(object? sender, EventArgs e)
         {
             if (!_view.SelectedBookId.HasValue)
             {
-                _view.ShowMessage("Не выбрана книга");
+                _view.ShowMessage("Выберите книгу!");
                 return;
             }
 
-            _model.DeleteBook(_view.SelectedBookId.Value, out var msg, out var ok);
-            _view.ShowMessage(msg);
-            if (ok) LoadPage();
+            int id = _view.SelectedBookId.Value;
+            _model.DeleteBook(id, out var message, out var success);
+            _view.ShowMessage(message);
+
+            if (success)
+                LoadPage();
         }
 
-        private void OnAddBookRequested(object? s, EventArgs e)
+        private void OnAddBookRequested(object? sender, EventArgs e)
         {
-            // Потом добавим: показать диалог BookForm через методы View.
+            var genres = _model.GetAvailableGenres();
+            var newBook = _view.ShowBookDialog(null, genres);
+            if (newBook == null)
+                return;
+
+            _model.CreateBook(newBook.Title, newBook.Author, newBook.Year, newBook.GenreId,
+                              out var message, out var success);
+            _view.ShowMessage(message);
+            if (success)
+                LoadPage();
         }
 
-        private void OnEditBookRequested(object? s, EventArgs e)
+        private void OnEditBookRequested(object? sender, EventArgs e)
         {
-            // Потом добавим: получить книгу, показать BookForm и обновить.
+            if (!_view.SelectedBookId.HasValue)
+            {
+                _view.ShowMessage("Выберите книгу!");
+                return;
+            }
+
+            var existing = _model.GetBook(_view.SelectedBookId.Value);
+            if (existing == null)
+            {
+                _view.ShowMessage("Книга не найдена!");
+                return;
+            }
+
+            var genres = _model.GetAvailableGenres();
+            var edited = _view.ShowBookDialog(existing, genres);
+            if (edited == null)
+                return;
+
+            _model.UpdateBook(edited.Id, edited.Title, edited.Author, edited.Year, edited.GenreId,
+                              out var message, out var success);
+            _view.ShowMessage(message);
+            if (success)
+                LoadPage();
         }
     }
 }

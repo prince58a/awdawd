@@ -23,14 +23,17 @@ namespace BookLibrary.Core
             return booksPage;
         }
 
-        public Book? GetBook(int id) => _logic.GetBook(id);
-
+        public Book? GetBook(int id)
+        {
+            return _logic.GetBook(id);
+        }
         public void CreateBook(string title, string author, int year, int genreId,
                        out string message, out bool success)
         {
             var result = _logic.CreateBook(title, author, year, genreId);
             success = result.Success;
             message = result.Message;
+
         }
 
 
@@ -47,6 +50,10 @@ namespace BookLibrary.Core
             var result = _logic.DeleteBook(id);
             success = _logic.DeleteBook(id);
             message = result ? "Книга удалена" : "Ошибка при удалении книги";
+        }
+        public IEnumerable<Genre> GetAvailableGenres()
+        {
+            return _logic.GetAvailableGenres();
         }
 
     }
