@@ -90,7 +90,6 @@
             add.TabIndex = 8;
             add.Text = "Добавить";
             add.UseVisualStyleBackColor = true;
-            add.Click += BtnADD_Click;
             // 
             // del
             // 
@@ -101,7 +100,6 @@
             del.TabIndex = 10;
             del.Text = "Удалить";
             del.UseVisualStyleBackColor = true;
-            del.Click += BtnDEL_Click;
             // 
             // edit
             // 
@@ -112,7 +110,6 @@
             edit.TabIndex = 9;
             edit.Text = "Редактировать";
             edit.UseVisualStyleBackColor = true;
-            edit.Click += BtnEDIT_Click;
             // 
             // author
             // 
@@ -123,7 +120,6 @@
             author.TabIndex = 4;
             author.Text = "По автору";
             author.UseVisualStyleBackColor = true;
-            author.Click += BtnSORTAuthor_Click;
             // 
             // genre
             // 
@@ -134,7 +130,6 @@
             genre.TabIndex = 5;
             genre.Text = "По жанру";
             genre.UseVisualStyleBackColor = true;
-            genre.Click += BtnSORTGenre_Click;
             // 
             // year
             // 
@@ -145,7 +140,6 @@
             year.TabIndex = 6;
             year.Text = "С года";
             year.UseVisualStyleBackColor = true;
-            year.Click += BtnSORTYear_Click;
             // 
             // AuthorSearchComboBox
             // 
@@ -194,7 +188,6 @@
             searchByIdButton.TabIndex = 2;
             searchByIdButton.Text = "Поиск";
             searchByIdButton.UseVisualStyleBackColor = true;
-            searchByIdButton.Click += BtnSearchById_Click;
             // 
             // resetSearchButton
             // 
@@ -205,7 +198,6 @@
             resetSearchButton.TabIndex = 3;
             resetSearchButton.Text = "Сброс";
             resetSearchButton.UseVisualStyleBackColor = true;
-            resetSearchButton.Click += BtnResetSearch_Click;
             // 
             // label1
             // 
@@ -261,7 +253,6 @@
             btnPrevPage.TabIndex = 20;
             btnPrevPage.Text = "Предыдущая";
             btnPrevPage.UseVisualStyleBackColor = true;
-            btnPrevPage.Click += BtnPrevPage_Click;
             // 
             // btnNextPage
             // 
@@ -272,7 +263,6 @@
             btnNextPage.TabIndex = 21;
             btnNextPage.Text = "Следующая";
             btnNextPage.UseVisualStyleBackColor = true;
-            btnNextPage.Click += BtnNextPage_Click;
             // 
             // labelPageInfo
             // 
@@ -379,11 +369,6 @@
         }
 
         private PictureBox pictureBox1;
-        private void btnRefresh_Click(object sender, EventArgs e)
-        {
-            LoadPaginatedBooks();
-        }
-
         private Label label4;
         private Button button1;
     }
