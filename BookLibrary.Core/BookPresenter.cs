@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection.Emit;
 
 namespace BookLibrary.Core
 {
@@ -73,6 +74,7 @@ namespace BookLibrary.Core
         private void OnResetSearchRequested(object? sender, EventArgs e)
         {
             LoadPage();
+            
         }
 
         private void OnDeleteBookRequested(object? sender, EventArgs e)

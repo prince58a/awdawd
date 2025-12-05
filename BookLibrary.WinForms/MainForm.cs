@@ -190,24 +190,40 @@ namespace BookLibrary.WinForms
         private void button1_Click(object sender, EventArgs e)
         {
             PlayHELLYEAHSound();
-            BackgroundImage = Properties.Resources.HELLYEAH;
-            button1.Image = Properties.Resources.HELLYEAH;
-            label4.Image = Properties.Resources.HELLYEAH;
-            add.Image = Properties.Resources.HELLYEAH;
-            del.Image = Properties.Resources.HELLYEAH;
-            edit.Image = Properties.Resources.HELLYEAH;
-            author.Image = Properties.Resources.HELLYEAH;
-            genre.Image = Properties.Resources.HELLYEAH;
-            year.Image = Properties.Resources.HELLYEAH;
-            searchByIdButton.Image = Properties.Resources.HELLYEAH;
-            resetSearchButton.Image = Properties.Resources.HELLYEAH;
-            label1.Image = Properties.Resources.HELLYEAH;
-            label2.Image = Properties.Resources.HELLYEAH;
-            label3.Image = Properties.Resources.HELLYEAH;
-            pictureBox1.Image = Properties.Resources.HELLYEAH;
-            btnPrevPage.Image = Properties.Resources.HELLYEAH;
-            btnNextPage.Image = Properties.Resources.HELLYEAH;
-            labelPageInfo.Image = Properties.Resources.HELLYEAH;
+            BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
+            button1.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
+            label4.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
+            add.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
+            del.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
+            edit.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
+            author.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
+            genre.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
+            year.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
+            searchByIdButton.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
+            resetSearchButton.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
+            pictureBox1.Image = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
+            btnPrevPage.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
+            btnNextPage.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
+        }
+
+        private void resetSearchButton_Click(object sender, EventArgs e)
+        {
+            idSearchTextBox.Text = "";
+
+            BackgroundImage = null;
+            button1.BackgroundImage = null;
+            label4.BackgroundImage = null;
+            add.BackgroundImage = null;
+            del.BackgroundImage = null;
+            edit.BackgroundImage = null;
+            author.BackgroundImage = null;
+            genre.BackgroundImage = null;
+            year.BackgroundImage = null;
+            searchByIdButton.BackgroundImage = null;
+            resetSearchButton.BackgroundImage = null;
+            pictureBox1.Image = Properties.Resources.jhoe;
+            btnPrevPage.BackgroundImage = null;
+            btnNextPage.BackgroundImage = null;
         }
     }
 }

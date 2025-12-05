@@ -79,5 +79,15 @@ namespace BookLibrary.WinForms.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ДА_ЧЕРТ_ПОБЕРИ {
+            get {
+                object obj = ResourceManager.GetObject("ДА ЧЕРТ ПОБЕРИ", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
