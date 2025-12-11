@@ -116,8 +116,15 @@ namespace BookLibrary.Core
 
         private void OnNextPageRequested(object? sender, EventArgs e)
         {
-            _currentPage++;
-            LoadPage();
+            int totalBooks;
+            var books = _model.GetBooksPage(_currentPage, _booksPerPage, out totalBooks);
+            int totalPages = Math.Max(1, (int)Math.Ceiling(totalBooks / (double)_booksPerPage));
+
+            if (_currentPage < totalPages)
+            {
+                _currentPage++;
+                LoadPage();
+            }
         }
 
         private void OnPrevPageRequested(object? sender, EventArgs e)
