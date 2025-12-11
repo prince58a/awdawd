@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
 
 namespace BookLibrary.Core
 {
@@ -19,6 +19,7 @@ namespace BookLibrary.Core
             _model = model;
             _logic = logic;
 
+            // Подписка на события View
             _view.AddBookRequested += OnAddBookRequested;
             _view.EditBookRequested += OnEditBookRequested;
             _view.DeleteBookRequested += OnDeleteBookRequested;
@@ -26,6 +27,7 @@ namespace BookLibrary.Core
             _view.ResetSearchRequested += OnResetSearchRequested;
             _view.NextPageRequested += OnNextPageRequested;
             _view.PrevPageRequested += OnPrevPageRequested;
+
             _view.SortByAuthorRequested += OnSortByAuthorRequested;
             _view.SortByGenreRequested += OnSortByGenreRequested;
             _view.SortByYearRequested += OnSortByYearRequested;
@@ -33,15 +35,40 @@ namespace BookLibrary.Core
             LoadPage();
         }
 
+        #region =============== Пагинация =============== 
+
         private void LoadPage()
         {
-            int totalBooks;
-            var books = _model.GetBooksPage(_currentPage, _booksPerPage, out totalBooks);
+
+            var books = _model.GetBooksPage(_currentPage, _booksPerPage, out int totalBooks);
             int totalPages = Math.Max(1, (int)Math.Ceiling(totalBooks / (double)_booksPerPage));
 
             _view.ShowBooks(books);
             _view.UpdatePageInfo(_currentPage, totalPages);
         }
+
+        private void OnNextPageRequested(object? sender, EventArgs e)
+        {
+            _ = _model.GetBooksPage(_currentPage, _booksPerPage, out int totalBooks);
+            int totalPages = Math.Max(1, (int)Math.Ceiling(totalBooks / (double)_booksPerPage));
+            if (_currentPage < totalPages)
+            {
+                _currentPage++;
+                LoadPage();
+            }
+        }
+
+        private void OnPrevPageRequested(object? sender, EventArgs e)
+        {
+            if (_currentPage <= 1)
+                return;
+
+            _currentPage--;
+            LoadPage();
+        }
+        #endregion
+
+        #region =============== Сортировки / фильтры ===============
 
         private void OnSortByGenreRequested(object? sender, EventArgs e)
         {
@@ -51,11 +78,14 @@ namespace BookLibrary.Core
                 return;
             }
 
-            var kostil = new List<string>{ "Биография","Детектив","Научная литература",
-                "Фэнтези","Поэзия","Приключения","Роман","Роман-антиутопия","Ужасы","Фантастика" };
+            var genreNames = new List<string>
+            {
+                "Биография","Детектив","Научная литература","Поэзия","Приключения",
+                "Роман","Роман-антиутопия","Ужасы","Фантастика", "Фэнтези"
+            };
 
-            var genre = _view.SelectedGenre;
-            int genreId = kostil.IndexOf(genre) + 1;
+            string genre = _view.SelectedGenre;
+            int genreId = genreNames.IndexOf(genre) + 1;
 
             var books = _logic.GetBooksByGenre(genreId);
             if (books.Count == 0)
@@ -64,7 +94,7 @@ namespace BookLibrary.Core
                 return;
             }
 
-            var result = string.Join("\n", books.Select(b => b.ToString()));
+            string result = string.Join("\n", books.Select(b => b.ToString()));
             _view.ShowMessage($"Книги жанра {genre}\n\n{result}");
         }
 
@@ -77,15 +107,15 @@ namespace BookLibrary.Core
             }
 
             string author = _view.SelectedAuthor;
+            var books = _logic.GetBooksByAuthor(author);
 
-            var books = _logic.GetBooksByAuthor(author); 
             if (books.Count == 0)
             {
                 _view.ShowMessage("Книги не найдены!");
                 return;
             }
 
-            var result = string.Join("\n", books.Select(b => b.ToString()));
+            string result = string.Join("\n", books.Select(b => b.ToString()));
             _view.ShowMessage($"Книги автора {author}\n\n{result}");
 
             LoadPage();
@@ -100,46 +130,26 @@ namespace BookLibrary.Core
             }
 
             int year = _view.SelectedYear.Value;
-
             var books = _logic.GetBooksAfterYear(year);
+
             if (books.Count == 0)
             {
                 _view.ShowMessage("Книги не найдены!");
                 return;
             }
 
-            var result = string.Join("\n", books.Select(b => b.ToString()));
+            string result = string.Join("\n", books.Select(b => b.ToString()));
             _view.ShowMessage($"Книги вышедшие после {year} года\n\n{result}");
 
             LoadPage();
         }
+        #endregion
 
-        private void OnNextPageRequested(object? sender, EventArgs e)
-        {
-            int totalBooks;
-            var books = _model.GetBooksPage(_currentPage, _booksPerPage, out totalBooks);
-            int totalPages = Math.Max(1, (int)Math.Ceiling(totalBooks / (double)_booksPerPage));
+        #region =============== Поиск / сброс ===============
 
-            if (_currentPage < totalPages)
-            {
-                _currentPage++;
-                LoadPage();
-            }
-        }
-
-        private void OnPrevPageRequested(object? sender, EventArgs e)
-        {
-            if (_currentPage > 1)
-            {
-                _currentPage--;
-                LoadPage();
-            }
-        }
-
-        
         private void OnSearchByIdRequested(object? sender, EventArgs e)
         {
-            if (!int.TryParse(_view.SearchIdText, out var id) || id <= 0)
+            if (!int.TryParse(_view.SearchIdText, out int id) || id <= 0)
             {
                 _view.ShowMessage("ID должен быть положительным числом!");
                 return;
@@ -152,14 +162,18 @@ namespace BookLibrary.Core
                 return;
             }
 
-            _view.ShowBooks(new[] { book });
+            _view.ShowBooks([book]);
         }
 
         private void OnResetSearchRequested(object? sender, EventArgs e)
         {
+            _currentPage = 1;
             LoadPage();
-            
         }
+
+        #endregion
+
+        #region =============== CRUD ===============
 
         private void OnDeleteBookRequested(object? sender, EventArgs e)
         {
@@ -170,9 +184,9 @@ namespace BookLibrary.Core
             }
 
             int id = _view.SelectedBookId.Value;
-            _model.DeleteBook(id, out var message, out var success);
-            _view.ShowMessage(message);
+            _model.DeleteBook(id, out string message, out bool success);
 
+            _view.ShowMessage(message);
             if (success)
                 LoadPage();
         }
@@ -181,11 +195,13 @@ namespace BookLibrary.Core
         {
             var genres = _model.GetAvailableGenres();
             var newBook = _view.ShowBookDialog(null, genres);
+
             if (newBook == null)
                 return;
 
             _model.CreateBook(newBook.Title, newBook.Author, newBook.Year, newBook.GenreId,
-                              out var message, out var success);
+                              out string message, out bool success);
+
             _view.ShowMessage(message);
             if (success)
                 LoadPage();
@@ -208,14 +224,18 @@ namespace BookLibrary.Core
 
             var genres = _model.GetAvailableGenres();
             var edited = _view.ShowBookDialog(existing, genres);
+
             if (edited == null)
                 return;
 
             _model.UpdateBook(edited.Id, edited.Title, edited.Author, edited.Year, edited.GenreId,
-                              out var message, out var success);
+                              out string message, out bool success);
+
             _view.ShowMessage(message);
             if (success)
                 LoadPage();
         }
+
+        #endregion
     }
 }

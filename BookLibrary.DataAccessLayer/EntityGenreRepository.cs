@@ -14,13 +14,12 @@ namespace BookLibrary.DataAccessLayer
         }
         public List<Genre> GetBooksPage(int page, int pageSize)
         {
-            return _context.Genres.OrderBy(g => g.Id).Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            return [.. _context.Genres.OrderBy(g => g.Id).Skip((page - 1) * pageSize).Take(pageSize)];
         }
         public int GetBooksCount()
         {
             return _context.Genres.Count();
         }
-
 
         public void Add(Genre item)
         {
@@ -40,7 +39,7 @@ namespace BookLibrary.DataAccessLayer
             return false;
         }
 
-        public IEnumerable<Genre> ReadAll() => _context.Genres.OrderBy(g => g.Name).ToList();
+        public IEnumerable<Genre> ReadAll() => [.. _context.Genres.OrderBy(g => g.Name)];
 
         public Genre ReadById(int id) => _context.Genres.Find(id);
 

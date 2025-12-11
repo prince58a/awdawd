@@ -19,7 +19,7 @@ namespace BookLibrary.DataAccessLayer
         {
             using var db = new SqliteConnection(_connectionString);
             string sql = "SELECT * FROM Genres ORDER BY Id LIMIT @PageSize OFFSET @Offset";
-            return db.Query<Genre>(sql, new { PageSize = pageSize, Offset = (page - 1) * pageSize }).ToList();
+            return [.. db.Query<Genre>(sql, new { PageSize = pageSize, Offset = (page - 1) * pageSize })];
         }
         public int GetBooksCount()
         {

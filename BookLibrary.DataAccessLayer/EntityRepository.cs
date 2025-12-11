@@ -8,15 +8,7 @@ namespace BookLibrary.DataAccessLayer
     public class EntityRepository : IRepository<Book>
     {
         private readonly BookDbContext _context;
-        public List<Book> GetBooksPage(int page, int pageSize)
-        {
-            return _context.Books
-                .OrderBy(b => b.Id)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .Include(b => b.Genre)
-                .ToList();
-        }
+        public List<Book> GetBooksPage(int page, int pageSize) => [.. _context.Books.OrderBy(b => b.Id).Skip((page - 1) * pageSize).Take(pageSize).Include(b => b.Genre)];
         public int GetBooksCount()
         {
             return _context.Books.Count();
@@ -48,7 +40,7 @@ namespace BookLibrary.DataAccessLayer
 
         public IEnumerable<Book> ReadAll()
         {
-            return _context.Books.Include(b => b.Genre).ToList();
+            return [.. _context.Books.Include(b => b.Genre)];
         }
 
         public Book ReadById(int id)

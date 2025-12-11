@@ -15,7 +15,7 @@ namespace BookLibrary.DataAccessLayer
         {
             string sql = "SELECT * FROM Books ORDER BY Id LIMIT @PageSize OFFSET @Offset";
             using IDbConnection db = new SqliteConnection(_connectionString);
-            return db.Query<Book>(sql, new { PageSize = pageSize, Offset = (page - 1) * pageSize }).ToList();
+            return [.. db.Query<Book>(sql, new { PageSize = pageSize, Offset = (page - 1) * pageSize })];
         }
         public int GetBooksCount()
         {
@@ -69,8 +69,8 @@ namespace BookLibrary.DataAccessLayer
 
                     var names = new[]
                     {
-                        "Фантастика","Детектив","Роман","Фэнтези","Ужасы",
-                        "Приключения","Научная литература","Биография","Поэзия","Роман-антиутопия"
+                        "Биография","Детектив","Научная литература","Поэзия","Приключения",
+                        "Роман","Роман-антиутопия","Ужасы","Фантастика", "Фэнтези"
                     };
 
                     foreach (var n in names)
