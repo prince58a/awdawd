@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Files\HELL YEAH.wav" />
     <None Remove="Files\sound.wav" />
   </ItemGroup>
 
@@ -53,9 +52,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Files\HELL YEAH.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Files\sound.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

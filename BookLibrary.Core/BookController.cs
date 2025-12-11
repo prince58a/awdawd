@@ -4,18 +4,20 @@ using System.Reflection.Emit;
 
 namespace BookLibrary.Core
 {
-    public class BookPresenter
+    public class BooksController
     {
         private readonly IBookView _view;
         private readonly IBookModel _model;
+        private readonly BookLogic _logic;
 
         private int _currentPage = 1;
         private readonly int _booksPerPage = 10;
 
-        public BookPresenter(IBookView view, IBookModel model)
+        public BooksController(IBookView view, IBookModel model, BookLogic logic)
         {
             _view = view;
             _model = model;
+            _logic = logic;
 
             _view.AddBookRequested += OnAddBookRequested;
             _view.EditBookRequested += OnEditBookRequested;
@@ -24,6 +26,9 @@ namespace BookLibrary.Core
             _view.ResetSearchRequested += OnResetSearchRequested;
             _view.NextPageRequested += OnNextPageRequested;
             _view.PrevPageRequested += OnPrevPageRequested;
+            _view.SortByAuthorRequested += OnSortByAuthorRequested;
+            _view.SortByGenreRequested += OnSortByGenreRequested;
+            _view.SortByYearRequested += OnSortByYearRequested;
 
             LoadPage();
         }
@@ -36,6 +41,77 @@ namespace BookLibrary.Core
 
             _view.ShowBooks(books);
             _view.UpdatePageInfo(_currentPage, totalPages);
+        }
+
+        private void OnSortByGenreRequested(object? sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(_view.SelectedGenre))
+            {
+                _view.ShowMessage("Выберите жанр!");
+                return;
+            }
+
+            var kostil = new List<string>{ "Биография","Детектив","Научная литература",
+                "Фэнтези","Поэзия","Приключения","Роман","Роман-антиутопия","Ужасы","Фантастика" };
+
+            var genre = _view.SelectedGenre;
+            int genreId = kostil.IndexOf(genre) + 1;
+
+            var books = _logic.GetBooksByGenre(genreId);
+            if (books.Count == 0)
+            {
+                _view.ShowMessage("Книги не найдены!");
+                return;
+            }
+
+            var result = string.Join("\n", books.Select(b => b.ToString()));
+            _view.ShowMessage($"Книги жанра {genre}\n\n{result}");
+        }
+
+        private void OnSortByAuthorRequested(object? sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(_view.SelectedAuthor))
+            {
+                _view.ShowMessage("Выберите автора!");
+                return;
+            }
+
+            string author = _view.SelectedAuthor;
+
+            var books = _logic.GetBooksByAuthor(author); 
+            if (books.Count == 0)
+            {
+                _view.ShowMessage("Книги не найдены!");
+                return;
+            }
+
+            var result = string.Join("\n", books.Select(b => b.ToString()));
+            _view.ShowMessage($"Книги автора {author}\n\n{result}");
+
+            LoadPage();
+        }
+
+        private void OnSortByYearRequested(object? sender, EventArgs e)
+        {
+            if (!_view.SelectedYear.HasValue)
+            {
+                _view.ShowMessage("Выберите год!");
+                return;
+            }
+
+            int year = _view.SelectedYear.Value;
+
+            var books = _logic.GetBooksAfterYear(year);
+            if (books.Count == 0)
+            {
+                _view.ShowMessage("Книги не найдены!");
+                return;
+            }
+
+            var result = string.Join("\n", books.Select(b => b.ToString()));
+            _view.ShowMessage($"Книги вышедшие после {year} года\n\n{result}");
+
+            LoadPage();
         }
 
         private void OnNextPageRequested(object? sender, EventArgs e)
@@ -53,6 +129,7 @@ namespace BookLibrary.Core
             }
         }
 
+        
         private void OnSearchByIdRequested(object? sender, EventArgs e)
         {
             if (!int.TryParse(_view.SearchIdText, out var id) || id <= 0)

@@ -8,10 +8,14 @@ namespace BookLibrary.Core
         int? SelectedBookId { get; }
         string SearchIdText { get; }
 
+        string? SelectedGenre { get; }
+        string? SelectedAuthor { get; }
+        int? SelectedYear { get; }
+
+
         void ShowBooks(IEnumerable<Book> books);
         void ShowMessage(string message);
         void UpdatePageInfo(int currentPage, int totalPages);
-
         Book? ShowBookDialog(Book? existing, IEnumerable<Genre> availableGenres);
 
         event EventHandler AddBookRequested;
@@ -21,5 +25,9 @@ namespace BookLibrary.Core
         event EventHandler ResetSearchRequested;
         event EventHandler NextPageRequested;
         event EventHandler PrevPageRequested;
+        
+        event EventHandler SortByGenreRequested;
+        event EventHandler SortByAuthorRequested;
+        event EventHandler SortByYearRequested;
     }
 }
