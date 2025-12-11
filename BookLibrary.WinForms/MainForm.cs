@@ -11,9 +11,12 @@ using System.Windows.Forms;
 
 namespace BookLibrary.WinForms
 {
-    public partial class MainForm : Form, IBookView
+    public partial class MainForm : Form
     {
-        private readonly BookPresenter _presenter;
+        private readonly IBookModel _model;
+
+        private int _currentPage = 1;
+        private readonly int _booksPerPage = 10;
 
         private SoundPlayer soundPlayer;
         private SoundPlayer hellyeahSound;
@@ -22,83 +25,158 @@ namespace BookLibrary.WinForms
         {
             InitializeComponent();
 
-            // Создаём BookLogic через Ninject и оборачиваем в модель
             IKernel ninjectKernel = new StandardKernel(new SimpleConfigModule());
             var logic = ninjectKernel.Get<BookLogic>();
-            IBookModel model = new BookModel(logic);
+            _model = new BookModel(logic);
 
-            _presenter = new BookPresenter(this, model);
-
-            // Привязка UI‑событий к событиям View (MVP)
-            add.Click += (s, e) => AddBookRequested?.Invoke(this, EventArgs.Empty);
-            edit.Click += (s, e) => EditBookRequested?.Invoke(this, EventArgs.Empty);
-            del.Click += (s, e) => DeleteBookRequested?.Invoke(this, EventArgs.Empty);
-            searchByIdButton.Click += (s, e) => SearchByIdRequested?.Invoke(this, EventArgs.Empty);
-            resetSearchButton.Click += (s, e) => ResetSearchRequested?.Invoke(this, EventArgs.Empty);
-            btnNextPage.Click += (s, e) => NextPageRequested?.Invoke(this, EventArgs.Empty);
-            btnPrevPage.Click += (s, e) => PrevPageRequested?.Invoke(this, EventArgs.Empty);
+            add.Click += Add_Click;
+            edit.Click += Edit_Click;
+            del.Click += Del_Click;
+            searchByIdButton.Click += SearchByIdButton_Click;
+            resetSearchButton.Click += ResetSearchButton_Click;
+            btnNextPage.Click += BtnNextPage_Click;
+            btnPrevPage.Click += BtnPrevPage_Click;
 
             InitializeSound();
             StartFileFlagListener();
 
             pictureBox1.Click += pictureBox1_Click;
-            button1.Click += button1_Click;
+            LoadPage();
         }
 
-        // ================= IBookView: данные от пользователя =================
-
-        public int? SelectedBookId =>
+        private int? SelectedBookId =>
             dataGridView1.SelectedRows.Count > 0
                 ? (int?)dataGridView1.SelectedRows[0].Cells["Id"].Value
                 : null;
 
-        public string SearchIdText => idSearchTextBox.Text.Trim();
+        private string SearchIdText => idSearchTextBox.Text.Trim();
 
-        // ================= IBookView: события =================
-
-        public event EventHandler AddBookRequested;
-        public event EventHandler EditBookRequested;
-        public event EventHandler DeleteBookRequested;
-        public event EventHandler SearchByIdRequested;
-        public event EventHandler ResetSearchRequested;
-        public event EventHandler NextPageRequested;
-        public event EventHandler PrevPageRequested;
-
-        // ================= IBookView: вывод =================
-
-        public void ShowBooks(IEnumerable<Book> books)
+        private void ShowBooks(IEnumerable<Book> books)
         {
             dataGridView1.DataSource = books.ToList();
         }
 
-        public void ShowMessage(string message)
+        private void ShowMessage(string message)
         {
             MessageBox.Show(message);
         }
 
-        public void UpdatePageInfo(int currentPage, int totalPages)
+        private void UpdatePageInfo(int currentPage, int totalPages)
         {
             labelPageInfo.Text = $"Страница {currentPage} из {totalPages}";
         }
 
-        // Диалог добавления/редактирования книги.
-        // existing == null -> создание новой книги.
-        public Book? ShowBookDialog(Book? existing, IEnumerable<Genre> availableGenres)
+        private void LoadPage()
         {
-            var genresArray = availableGenres.ToArray();
+            int totalBooks;
+            var books = _model.GetBooksPage(_currentPage, _booksPerPage, out totalBooks);
+            int totalPages = Math.Max(1, (int)Math.Ceiling(totalBooks / (double)_booksPerPage));
 
-            BookForm form;
+            ShowBooks(books);
+            UpdatePageInfo(_currentPage, totalPages);
+        }
 
+        private void BtnNextPage_Click(object? sender, EventArgs e)
+        {
+            _currentPage++;
+            LoadPage();
+        }
+
+        private void BtnPrevPage_Click(object? sender, EventArgs e)
+        {
+            if (_currentPage > 1)
+            {
+                _currentPage--;
+                LoadPage();
+            }
+        }
+
+        private void SearchByIdButton_Click(object? sender, EventArgs e)
+        {
+            if (!int.TryParse(SearchIdText, out var id) || id <= 0)
+            {
+                ShowMessage("ID должен быть положительным числом!");
+                return;
+            }
+
+            var book = _model.GetBook(id);
+            if (book == null)
+            {
+                ShowMessage($"Книга с ID {id} не найдена!");
+                return;
+            }
+
+            ShowBooks(new[] { book });
+        }
+
+        private void ResetSearchButton_Click(object? sender, EventArgs e)
+        {
+            idSearchTextBox.Text = "";
+            LoadPage();
+        }
+
+        private void Del_Click(object? sender, EventArgs e)
+        {
+            if (!SelectedBookId.HasValue)
+            {
+                ShowMessage("Выберите книгу!");
+                return;
+            }
+
+            int id = SelectedBookId.Value;
+            _model.DeleteBook(id, out var message, out var success);
+            ShowMessage(message);
+            if (success)
+                LoadPage();
+        }
+
+        private void Add_Click(object? sender, EventArgs e)
+        {
+            var genres = _model.GetAvailableGenres();
+            var newBook = ShowBookDialog(null, genres);
+            if (newBook == null)
+                return;
+
+            _model.CreateBook(newBook.Title, newBook.Author, newBook.Year, newBook.GenreId,
+                              out var message, out var success);
+            ShowMessage(message);
+            if (success)
+                LoadPage();
+        }
+
+        private void Edit_Click(object? sender, EventArgs e)
+        {
+            if (!SelectedBookId.HasValue)
+            {
+                ShowMessage("Выберите книгу!");
+                return;
+            }
+
+            var existing = _model.GetBook(SelectedBookId.Value);
             if (existing == null)
             {
-                // конструктор BookForm(Genre[] genres)
-                form = new BookForm(genresArray);
+                ShowMessage("Книга не найдена!");
+                return;
             }
-            else
-            {
-                // конструктор BookForm(Book book, Genre[] genres)
-                form = new BookForm(existing, genresArray);
-            }
+
+            var genres = _model.GetAvailableGenres();
+            var edited = ShowBookDialog(existing, genres);
+            if (edited == null)
+                return;
+
+            _model.UpdateBook(edited.Id, edited.Title, edited.Author, edited.Year, edited.GenreId,
+                              out var message, out var success);
+            ShowMessage(message);
+            if (success)
+                LoadPage();
+        }
+
+        private Book? ShowBookDialog(Book? existing, IEnumerable<Genre> availableGenres)
+        {
+            var genresArray = availableGenres.ToArray();
+            BookForm form = existing == null
+                ? new BookForm(genresArray)
+                : new BookForm(existing, genresArray);
 
             if (form.ShowDialog() == DialogResult.OK)
             {
@@ -115,7 +193,13 @@ namespace BookLibrary.WinForms
             return null;
         }
 
-        // ================= Прочий UI‑код (звук, гифка, флаг‑файл) =================
+        // дальше оставляешь твой звук, гифку и resetSearchButton_Click,
+        // только не забудь переименовать обработчик в ResetSearchButton_Click
+        // или поменять привязку в Designer
+
+
+
+// ================= Прочий UI‑код (звук, гифка, флаг‑файл) =================
 
         private void StartFileFlagListener()
         {
@@ -143,7 +227,6 @@ namespace BookLibrary.WinForms
             try
             {
                 soundPlayer = new SoundPlayer(@"Files\sound.wav");
-                hellyeahSound = new SoundPlayer(@"Files\HELL YEAH.wav");
             }
             catch (Exception ex)
             {
@@ -163,18 +246,6 @@ namespace BookLibrary.WinForms
             }
         }
 
-        private void PlayHELLYEAHSound()
-        {
-            try
-            {
-                hellyeahSound?.Play();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка воспроизведения звука: {ex.Message}");
-            }
-        }
-
         private void OpenGifWindow()
         {
             GifForm gifForm = new GifForm();
@@ -187,43 +258,9 @@ namespace BookLibrary.WinForms
             OpenGifWindow();
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            PlayHELLYEAHSound();
-            BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
-            button1.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
-            label4.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
-            add.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
-            del.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
-            edit.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
-            author.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
-            genre.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
-            year.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
-            searchByIdButton.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
-            resetSearchButton.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
-            pictureBox1.Image = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
-            btnPrevPage.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
-            btnNextPage.BackgroundImage = Properties.Resources.ДА_ЧЕРТ_ПОБЕРИ;
-        }
-
         private void resetSearchButton_Click(object sender, EventArgs e)
         {
-            idSearchTextBox.Text = "";
-
-            BackgroundImage = null;
-            button1.BackgroundImage = null;
-            label4.BackgroundImage = null;
-            add.BackgroundImage = null;
-            del.BackgroundImage = null;
-            edit.BackgroundImage = null;
-            author.BackgroundImage = null;
-            genre.BackgroundImage = null;
-            year.BackgroundImage = null;
-            searchByIdButton.BackgroundImage = null;
-            resetSearchButton.BackgroundImage = null;
-            pictureBox1.Image = Properties.Resources.jhoe;
-            btnPrevPage.BackgroundImage = null;
-            btnNextPage.BackgroundImage = null;
+            idSearchTextBox.Text = "";            
         }
     }
 }
