@@ -175,34 +175,30 @@ namespace BookLibrary.Core
 
         #region =============== CRUD ===============
 
-        private void OnDeleteBookRequested(object? sender, EventArgs e)
-        {
-            if (!_view.SelectedBookId.HasValue)
-            {
-                _view.ShowMessage("Выберите книгу!");
-                return;
-            }
+ 
 
-            int id = _view.SelectedBookId.Value;
-            _model.DeleteBook(id, out string message, out bool success);
 
-            _view.ShowMessage(message);
-            if (success)
-                LoadPage();
-        }
+        #endregion
 
         private void OnAddBookRequested(object? sender, EventArgs e)
         {
             var genres = _model.GetAvailableGenres();
             var newBook = _view.ShowBookDialog(null, genres);
-
             if (newBook == null)
                 return;
 
-            _model.CreateBook(newBook.Title, newBook.Author, newBook.Year, newBook.GenreId,
-                              out string message, out bool success);
+            // простая валидация в контроллере
+            if (newBook.Year > DateTime.Now.Year)
+            {
+                _view.ShowMessage($"Год должен быть не позже {DateTime.Now.Year}!");
+                return;
+            }
 
-            _view.ShowMessage(message);
+            bool success = _model.CreateBook(newBook);
+            _view.ShowMessage(success
+                ? "Книга успешно добавлена!"
+                : "Ошибка при добавлении книги (возможно, такая уже существует).");
+
             if (success)
                 LoadPage();
         }
@@ -224,18 +220,42 @@ namespace BookLibrary.Core
 
             var genres = _model.GetAvailableGenres();
             var edited = _view.ShowBookDialog(existing, genres);
-
             if (edited == null)
                 return;
 
-            _model.UpdateBook(edited.Id, edited.Title, edited.Author, edited.Year, edited.GenreId,
-                              out string message, out bool success);
+            if (edited.Year > DateTime.Now.Year)
+            {
+                _view.ShowMessage($"Год должен быть не позже {DateTime.Now.Year}!");
+                return;
+            }
 
-            _view.ShowMessage(message);
+            bool success = _model.UpdateBook(edited);
+            _view.ShowMessage(success
+                ? "Книга успешно изменена!"
+                : "Ошибка при изменении книги.");
+
             if (success)
                 LoadPage();
         }
 
-        #endregion
+        private void OnDeleteBookRequested(object? sender, EventArgs e)
+        {
+            if (!_view.SelectedBookId.HasValue)
+            {
+                _view.ShowMessage("Выберите книгу!");
+                return;
+            }
+
+            int id = _view.SelectedBookId.Value;
+            bool success = _model.DeleteBook(id);
+
+            _view.ShowMessage(success
+                ? "Книга удалена."
+                : "Ошибка при удалении книги.");
+
+            if (success)
+                LoadPage();
+        }
+
     }
 }
