@@ -29,14 +29,20 @@
         </DataGrid>
 
         <!-- Пагинация -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="-0,0,0,8">
+            <Label Content="Название" HorizontalAlignment="Left" Margin="0,1,100,0" Grid.Row="1" VerticalAlignment="Top" Width="76"/>
+            <Label Content="Автор" HorizontalAlignment="Left" Margin="0,1,60,0" Grid.Row="1" VerticalAlignment="Top" Width="56"/>
+            <Label Content="Год" HorizontalAlignment="Left" Margin="0,1,40,0" Grid.Row="1" VerticalAlignment="Top" Width="56"/>
+            <Label Content="Жанр" HorizontalAlignment="Left" Margin="0,1,60,0" Grid.Row="1" VerticalAlignment="Top" Width="56"/>
+
+
             <Button Content="&lt; Предыдущая"
                     Command="{Binding PrevPageCommand}"
-                    Margin="0,0,8,0" Width="120" />
+                    Margin="0,0,8,0" Width="100" />
             <TextBlock Text="{Binding PageInfo}" VerticalAlignment="Center" />
             <Button Content="Следующая &gt;"
                     Command="{Binding NextPageCommand}"
-                    Margin="8,0,0,0" Width="120" />
+                    Margin="8,0,0,0" Width="100" />
         </StackPanel>
 
         <!-- Панель добавления / редактирования -->
@@ -57,13 +63,13 @@
 
             <Button Content="Добавить"
                     Command="{Binding AddBookCommand}"
-                    Margin="0,0,8,0" Width="90" />
+                    Margin="0,0,8,0" Width="100" />
             <Button Content="Редактировать"
                     Command="{Binding EditBookCommand}"
-                    Margin="0,0,8,0" Width="110" />
+                    Margin="0,0,8,0" Width="100" />
             <Button Content="Удалить"
                     Command="{Binding DeleteBookCommand}"
-                    Width="90" />
+                    Width="100" />
         </StackPanel>
     </Grid>
 </Window>
