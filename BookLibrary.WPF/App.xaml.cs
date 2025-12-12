@@ -11,7 +11,7 @@ namespace BookLibrary.WPF
         {
             base.OnStartup(e);
 
-            var dbContext = new BookDbContext("C:\\Users\\egorg\\Documents\\GitHub\\awdawd\\BookLibrary.db");
+            var dbContext = new BookDbContext("C:\\Users\\gosha\\Documents\\GitHub\\awdawd\\BookLibrary.db");
             var bookRepo = new EntityRepository(dbContext);
             var genreRepo = new EntityGenreRepository(dbContext);
             var logic = new BookLogic(bookRepo, genreRepo);

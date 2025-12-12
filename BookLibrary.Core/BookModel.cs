@@ -2,7 +2,6 @@
 
 namespace BookLibrary.Core
 {
-
     public class BookModel : IBookModel
     {
         private readonly BookLogic _logic;
@@ -14,44 +13,23 @@ namespace BookLibrary.Core
 
         public IEnumerable<Book> GetBooksPage(int page, int pageSize, out int totalBooks)
         {
+            var booksPage = _logic.GetBooksPage(page, pageSize);
             totalBooks = _logic.GetBooksCount();
-            return _logic.GetBooksPage(page, pageSize);
+            return booksPage;
         }
 
-        public Book? GetBook(int id)
-        {
-            return _logic.GetBook(id);
-        }
+        public Book? GetBook(int id) => _logic.GetBook(id);
 
-        public IEnumerable<Genre> GetAvailableGenres()
-        {
-            return _logic.GetAvailableGenres();
-        }
+        public bool CreateBook(string title, string author, int year, int genreId)
+            => _logic.CreateBook(title, author, year, genreId).Success;
 
-        public bool CreateBook(Book book)
-        {
-            var result = _logic.CreateBook(
-                book.Title,
-                book.Author,
-                book.Year,
-                book.GenreId);
-
-            return result.Success;
-        }
-
-        public bool UpdateBook(Book book)
-        {
-            return _logic.UpdateBook(
-                book.Id,
-                book.Title,
-                book.Author,
-                book.Year,
-                book.GenreId);
-        }
+        public bool UpdateBook(int id, string title, string author, int year, int genreId)
+            => _logic.UpdateBook(id, title, author, year, genreId);
 
         public bool DeleteBook(int id)
-        {
-            return _logic.DeleteBook(id);
-        }
+            => _logic.DeleteBook(id);
+
+        public IEnumerable<Genre> GetAvailableGenres()
+            => _logic.GetAvailableGenres();
     }
 }

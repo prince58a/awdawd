@@ -2,7 +2,6 @@
 using BookLibrary.DataAccessLayer;
 using Ninject;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,33 +11,31 @@ namespace BookLibrary.WinForms
 {
     public partial class MainForm : Form, IBookView
     {
-        private readonly BooksController _controller;
+        private readonly BookController _controller;
         private readonly BookLogic _logic;
 
         public MainForm()
         {
             InitializeComponent();
 
-            // DI‑инициализация
             IKernel kernel = new StandardKernel(new SimpleConfigModule());
             _logic = kernel.Get<BookLogic>();
             IBookModel model = new BookModel(_logic);
 
-            _controller = new BooksController(this, model, _logic);
+            _controller = new BookController(this, model);
 
-            // Проброс событий во View
-            add.Click += (s, e) => AddBookRequested?.Invoke(this, EventArgs.Empty);
-            edit.Click += (s, e) => EditBookRequested?.Invoke(this, EventArgs.Empty);
-            del.Click += (s, e) => DeleteBookRequested?.Invoke(this, EventArgs.Empty);
-            searchByIdButton.Click += (s, e) => SearchByIdRequested?.Invoke(this, EventArgs.Empty);
-            resetSearchButton.Click += (s, e) => ResetSearchRequested?.Invoke(this, EventArgs.Empty);
+            add.Click += (s, e) => _controller.AddBook();
+            edit.Click += (s, e) => _controller.EditBook();
+            del.Click += (s, e) => _controller.DeleteBook();
+            searchByIdButton.Click += (s, e) => _controller.SearchById();
+            resetSearchButton.Click += (s, e) => _controller.ResetSearch();
 
-            btnNextPage.Click += (s, e) => NextPageRequested?.Invoke(this, EventArgs.Empty);
-            btnPrevPage.Click += (s, e) => PrevPageRequested?.Invoke(this, EventArgs.Empty);
+            btnNextPage.Click += (s, e) => _controller.NextPage();
+            btnPrevPage.Click += (s, e) => _controller.PrevPage();
 
-            genre.Click += (s, e) => SortByGenreRequested?.Invoke(this, EventArgs.Empty);
-            author.Click += (s, e) => SortByAuthorRequested?.Invoke(this, EventArgs.Empty);
-            year.Click += (s, e) => SortByYearRequested?.Invoke(this, EventArgs.Empty);
+            genre.Click += (s, e) => _controller.SortByGenre();
+            author.Click += (s, e) => _controller.SortByAuthor();
+            year.Click += (s, e) => _controller.SortByYear();
 
             StartFileFlagListener();
             LoadYears();
@@ -46,7 +43,7 @@ namespace BookLibrary.WinForms
             LoadAuthors();
         }
 
-        #region ============== IBookView: входные данные ==============
+        // ===== IBookView: входные данные =====
 
         public int? SelectedBookId =>
             dataGridView1.SelectedRows.Count > 0
@@ -59,30 +56,13 @@ namespace BookLibrary.WinForms
         public string? SelectedAuthor => AuthorSearchComboBox.SelectedItem?.ToString();
 
         public int? SelectedYear =>
-            int.TryParse(YearSearchComboBox.SelectedItem?.ToString(), out var yearValue)
-                ? yearValue
+            int.TryParse(YearSearchComboBox.SelectedItem?.ToString(), out var y)
+                ? y
                 : (int?)null;
-        #endregion
 
-        #region ============== IBookView: события ==============
+        // ===== IBookView: вывод =====
 
-        public event EventHandler AddBookRequested;
-        public event EventHandler EditBookRequested;
-        public event EventHandler DeleteBookRequested;
-        public event EventHandler SearchByIdRequested;
-        public event EventHandler ResetSearchRequested;
-        public event EventHandler NextPageRequested;
-        public event EventHandler PrevPageRequested;
-
-        public event EventHandler SortByGenreRequested;
-        public event EventHandler SortByAuthorRequested;
-        public event EventHandler SortByYearRequested;
-
-        #endregion
-
-        #region ============== IBookView: вывод ==============
-
-        public void ShowBooks(IEnumerable<Book> books)
+        public void ShowBooks(System.Collections.Generic.IEnumerable<Book> books)
         {
             dataGridView1.DataSource = books.ToList();
         }
@@ -97,10 +77,8 @@ namespace BookLibrary.WinForms
             labelPageInfo.Text = $"Страница {currentPage} из {totalPages}";
         }
 
-        #endregion
-
-        // Диалог добавления/редактирования книги
-        public Book? ShowBookDialog(Book? existing, IEnumerable<Genre> availableGenres)
+        public Book? ShowBookDialog(Book? existing,
+                                    System.Collections.Generic.IEnumerable<Genre> availableGenres)
         {
             var genresArray = availableGenres.ToArray();
 
@@ -121,7 +99,7 @@ namespace BookLibrary.WinForms
             };
         }
 
-        #region ============== Прочий UI‑код ==============
+        // ===== Остальной UI =====
 
         private void StartFileFlagListener()
         {
@@ -133,11 +111,7 @@ namespace BookLibrary.WinForms
                 {
                     if (System.IO.File.Exists(flagPath))
                     {
-                        Invoke(new Action(() =>
-                        {
-                            ResetSearchRequested?.Invoke(this, EventArgs.Empty);
-                        }));
-
+                        Invoke(new Action(() => _controller.ResetSearch()));
                         System.IO.File.Delete(flagPath);
                     }
 
@@ -195,6 +169,5 @@ namespace BookLibrary.WinForms
             if (authors.Length > 0)
                 AuthorSearchComboBox.SelectedIndex = 0;
         }
-        #endregion
     }
 }
