@@ -35,8 +35,14 @@ namespace BookLibrary.Core
 
         public void NextPage()
         {
-            _currentPage++;
-            LoadPage();
+            int totalBooks;
+            var books = _model.GetBooksPage(_currentPage, PageSize, out totalBooks);
+            int totalPages = Math.Max(1, (int)Math.Ceiling(totalBooks / (double)PageSize));
+            if (totalPages > _currentPage)
+            {
+                _currentPage++;
+                LoadPage();
+            }
         }
 
         public void PrevPage()
