@@ -11,8 +11,13 @@ namespace BookLibrary.WinForms
 {
     public partial class MainForm : Form, IBookView
     {
-        private readonly BookController _controller;
+        // Было:
+        // private readonly BookController _controller;
+        // private readonly BookLogic _logic;
+
+        private readonly BookControllerActive _controller;
         private readonly BookLogic _logic;
+        private readonly BookModelActive _model;
 
         public MainForm()
         {
@@ -20,19 +25,21 @@ namespace BookLibrary.WinForms
 
             IKernel kernel = new StandardKernel(new SimpleConfigModule());
             _logic = kernel.Get<BookLogic>();
-            IBookModel model = new BookModel(_logic);
 
-            _controller = new BookController(this, model);
+            _model = new BookModelActive();
+
+            _controller = new BookControllerActive(this, _model, _logic);
+
+            _model.BooksChanged += Model_BooksChanged;
+            _model.PageInfoChanged += Model_PageInfoChanged;
 
             add.Click += (s, e) => _controller.AddBook();
             edit.Click += (s, e) => _controller.EditBook();
             del.Click += (s, e) => _controller.DeleteBook();
             searchByIdButton.Click += (s, e) => _controller.SearchById();
             resetSearchButton.Click += (s, e) => _controller.ResetSearch();
-
             btnNextPage.Click += (s, e) => _controller.NextPage();
             btnPrevPage.Click += (s, e) => _controller.PrevPage();
-
             genre.Click += (s, e) => _controller.SortByGenre();
             author.Click += (s, e) => _controller.SortByAuthor();
             year.Click += (s, e) => _controller.SortByYear();
@@ -41,6 +48,17 @@ namespace BookLibrary.WinForms
             LoadYears();
             LoadGenres();
             LoadAuthors();
+            _controller.ResetSearch();
+        }
+
+        private void Model_BooksChanged(object? sender, EventArgs e)
+        {
+            ShowBooks(_model.Books);
+        }
+
+        private void Model_PageInfoChanged(object? sender, EventArgs e)
+        {
+            UpdatePageInfo(_model.CurrentPage, _model.TotalPages);
         }
 
         // ===== IBookView: входные данные =====
@@ -53,6 +71,7 @@ namespace BookLibrary.WinForms
         public string SearchIdText => idSearchTextBox.Text.Trim();
 
         public string? SelectedGenre => GenereSearchComboBox.SelectedItem?.ToString();
+
         public string? SelectedAuthor => AuthorSearchComboBox.SelectedItem?.ToString();
 
         public int? SelectedYear =>
@@ -78,10 +97,9 @@ namespace BookLibrary.WinForms
         }
 
         public Book? ShowBookDialog(Book? existing,
-                                    System.Collections.Generic.IEnumerable<Genre> availableGenres)
+            System.Collections.Generic.IEnumerable<Genre> availableGenres)
         {
             var genresArray = availableGenres.ToArray();
-
             BookForm form = existing == null
                 ? new BookForm(genresArray)
                 : new BookForm(existing, genresArray);
@@ -106,7 +124,6 @@ namespace BookLibrary.WinForms
             Task.Run(() =>
             {
                 const string flagPath = @"C:\Temp\refresh.signal";
-
                 while (true)
                 {
                     if (System.IO.File.Exists(flagPath))
@@ -114,7 +131,6 @@ namespace BookLibrary.WinForms
                         Invoke(new Action(() => _controller.ResetSearch()));
                         System.IO.File.Delete(flagPath);
                     }
-
                     Thread.Sleep(500);
                 }
             });
@@ -135,7 +151,6 @@ namespace BookLibrary.WinForms
 
             YearSearchComboBox.Items.Clear();
             YearSearchComboBox.Items.AddRange(years.Cast<object>().ToArray());
-
             if (years.Length > 0)
                 YearSearchComboBox.SelectedIndex = 0;
         }
@@ -150,7 +165,6 @@ namespace BookLibrary.WinForms
 
             GenereSearchComboBox.Items.Clear();
             GenereSearchComboBox.Items.AddRange(genres);
-
             if (genres.Length > 0)
                 GenereSearchComboBox.SelectedIndex = 0;
         }
@@ -165,9 +179,9 @@ namespace BookLibrary.WinForms
 
             AuthorSearchComboBox.Items.Clear();
             AuthorSearchComboBox.Items.AddRange(authors);
-
             if (authors.Length > 0)
                 AuthorSearchComboBox.SelectedIndex = 0;
         }
     }
 }
+

@@ -1,35 +1,28 @@
-﻿using System.Collections.Generic;
+﻿
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BookLibrary.Core
 {
-    public class BookModel : IBookModel
+    /// <summary>Тонкая активная модель: хранит состояние + события.</summary>
+    public class BookModelActive
     {
-        private readonly BookLogic _logic;
+        public event EventHandler? BooksChanged;
+        public event EventHandler? PageInfoChanged;
 
-        public BookModel(BookLogic logic)
+        public IReadOnlyList<Book> Books { get; private set; } = new List<Book>();
+        public int CurrentPage { get; private set; } = 1;
+        public int TotalPages { get; private set; } = 1;
+
+        public void SetPageData(IEnumerable<Book> books, int currentPage, int totalPages)
         {
-            _logic = logic;
+            Books = books.ToList();
+            CurrentPage = currentPage;
+            TotalPages = totalPages;
+
+            BooksChanged?.Invoke(this, EventArgs.Empty);
+            PageInfoChanged?.Invoke(this, EventArgs.Empty);
         }
-
-        public IEnumerable<Book> GetBooksPage(int page, int pageSize, out int totalBooks)
-        {
-            var booksPage = _logic.GetBooksPage(page, pageSize);
-            totalBooks = _logic.GetBooksCount();
-            return booksPage;
-        }
-
-        public Book? GetBook(int id) => _logic.GetBook(id);
-
-        public bool CreateBook(string title, string author, int year, int genreId)
-            => _logic.CreateBook(title, author, year, genreId).Success;
-
-        public bool UpdateBook(int id, string title, string author, int year, int genreId)
-            => _logic.UpdateBook(id, title, author, year, genreId);
-
-        public bool DeleteBook(int id)
-            => _logic.DeleteBook(id);
-
-        public IEnumerable<Genre> GetAvailableGenres()
-            => _logic.GetAvailableGenres();
     }
 }
