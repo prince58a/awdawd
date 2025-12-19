@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 namespace BookLibrary.Core
+
 {
     public interface IDomainObject
     {
