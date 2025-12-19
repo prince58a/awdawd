@@ -3,6 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Библиотека книг" 
         Height="546" Width="900"
+        Focusable="True"
+        KeyDown="Window_KeyDown"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen">
     <Grid Margin="10">

@@ -13,6 +13,8 @@ namespace BookLibrary.Wpf.ViewModels
     public class MainViewModel : ViewModelBase
     {
         private readonly BookLogic _logic;
+        private readonly KonamiDetector konami = new(); // этаче
+        private readonly List<Key> inputBuffer = new(); // этаче
 
         public bool ExportId { get; set; } = true;
         public bool ExportTitle { get; set; } = true;
@@ -22,6 +24,8 @@ namespace BookLibrary.Wpf.ViewModels
         public bool HeyGoodLokin { get; set; } = true; // красивый вид джсона
 
         public ICommand ExportJsonCommand { get; }
+        public ICommand OpenEasterEggCommand { get; } // этаче
+
 
         public ObservableCollection<Book> Books { get; } = new();
 
@@ -68,6 +72,8 @@ namespace BookLibrary.Wpf.ViewModels
             PrevPageCommand = new RelayCommand(_ => GoPrevPage(), _ => _currentPage > 1);
 
             ExportJsonCommand = new RelayCommand(_ => ExportJson(), _ => Books.Any());
+
+            OpenEasterEggCommand = new RelayCommand(_ => OpenEasterEgg()); // этаче
 
             LoadPage();
 
@@ -163,6 +169,18 @@ namespace BookLibrary.Wpf.ViewModels
 
         #endregion
 
+        private void OpenEasterEgg() // этаче
+        {
+            var easterWindow = new EasterEggWindow();
+            easterWindow.Show();
+        }
+
+        public void HandleKey(Key key) // этаче
+        {
+            if (konami.CheckKey(key))
+                OpenEasterEggCommand.Execute(null);
+        }
+
         private void ExportJson()
         {
             var qqqq = new SaveFileDialog
@@ -193,6 +211,28 @@ namespace BookLibrary.Wpf.ViewModels
 
             var json = JsonSerializer.Serialize(exportObjects, options);
             File.WriteAllText(qqqq.FileName, json);
+        }
+    }
+
+    public class KonamiDetector
+    {
+        private readonly Key[] konamiCode = {
+            Key.Up, Key.Up, Key.Down, Key.Down,
+            Key.Left, Key.Right, Key.Left, Key.Right,
+            Key.B, Key.A
+        };
+
+        private readonly List<Key> inputBuffer = new();
+
+        public bool CheckKey(Key key)
+        {
+            inputBuffer.Add(key);
+
+            if (inputBuffer.Count > konamiCode.Length)
+                inputBuffer.RemoveAt(0);
+
+            return inputBuffer.Count == konamiCode.Length &&
+                   inputBuffer.SequenceEqual(konamiCode);
         }
     }
 }
