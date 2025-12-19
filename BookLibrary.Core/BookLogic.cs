@@ -9,14 +9,15 @@ namespace BookLibrary.Core
         private readonly IRepository<Book> _bookRepository = bookRepository;
         private readonly IRepository<Genre> _genreRepository = genreRepository;
 
-        // ============== Жанры ==============
+        #region ============== Жанры ==============
 
         public List<Genre> GetAvailableGenres()
         {
             return [.. _genreRepository.ReadAll()];
         }
+        #endregion
 
-        // ============== Создание / изменение / удаление ==============
+        #region ============== CRUID ==============
 
         public (bool Success, Book? Book, string Message) CreateBook(
             string title,
@@ -67,7 +68,9 @@ namespace BookLibrary.Core
             return _bookRepository.Delete(id);
         }
 
-        // ============== Чтение ==============
+        #endregion
+
+        #region ============== Чтение ==============
 
         public Book? GetBook(int id)
         {
@@ -88,7 +91,9 @@ namespace BookLibrary.Core
                     book.GenreId == genreId);
         }
 
-        // ============== Отборы / группировки ==============
+        #endregion
+
+        #region ============== Отборы / группировки ==============
 
         public List<Book> GetBooksByAuthor(string author)
         {
@@ -109,8 +114,9 @@ namespace BookLibrary.Core
         {
             return _bookRepository.ReadAll().GroupBy(b => b.Genre?.Name ?? b.GenreId.ToString()).ToDictionary(g => g.Key, g => g.ToList());
         }
+        #endregion
 
-        // ============== Пагинация ==============
+        #region ============== Пагинация ==============
 
         public List<Book> GetBooksPage(int page, int pageSize)
         {
@@ -121,5 +127,6 @@ namespace BookLibrary.Core
         {
             return _bookRepository.GetBooksCount();
         }
+        #endregion
     }
 }

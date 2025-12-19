@@ -21,6 +21,7 @@ namespace BookLibrary.Core
             LoadPage(1);
         }
 
+        #region ========= Пагинация =========
         private void LoadPage(int page)
         {
             int totalBooks = _logic.GetBooksCount();
@@ -31,8 +32,6 @@ namespace BookLibrary.Core
             var books = _logic.GetBooksPage(page, PageSize);
             _model.SetPageData(books, page, totalPages);
         }
-
-        // ========= Пагинация =========
 
         public void NextPage()
         {
@@ -50,8 +49,9 @@ namespace BookLibrary.Core
         {
             LoadPage(1);
         }
+        #endregion
 
-        // ========= Поиск =========
+        #region ========= Поиск =========
 
         public void SearchById()
         {
@@ -71,8 +71,9 @@ namespace BookLibrary.Core
             // Тут можно либо обновить модель одной книгой, либо просто показать сообщение.
             _view.ShowBooks(new[] { book });
         }
+        #endregion
 
-        // ========= CRUD =========
+        #region ========= CRUD =========
 
         public void AddBook()
         {
@@ -135,8 +136,9 @@ namespace BookLibrary.Core
             if (ok)
                 LoadPage(_model.CurrentPage);
         }
+        #endregion
 
-        // ========= Сортировки / фильтры =========
+        #region ========= Сортировки / фильтры =========
 
         public void SortByGenre()
         {
@@ -204,5 +206,6 @@ namespace BookLibrary.Core
                                         filtered.Select(b => b.ToString()));
             _view.ShowMessage($"Книги после {year} года:{Environment.NewLine}{Environment.NewLine}{result}");
         }
+        #endregion
     }
 }
