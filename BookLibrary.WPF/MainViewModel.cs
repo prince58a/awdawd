@@ -1,15 +1,27 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Input;
-using BookLibrary.Core;
+﻿using BookLibrary.Core;
 using BookLibrary.DataAccessLayer;
 using BookLibrary.Wpf.Infrastructure;
+using Microsoft.Win32;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text.Json;
+using System.Windows.Input;
+using System.IO;
 
 namespace BookLibrary.Wpf.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
         private readonly BookLogic _logic;
+
+        public bool ExportId { get; set; } = true;
+        public bool ExportTitle { get; set; } = true;
+        public bool ExportAuthor { get; set; } = true;
+        public bool ExportYear { get; set; } = true;
+        public bool ExportGenre { get; set; } = true;
+        public bool HeyGoodLokin { get; set; } = true; // красивый вид джсона
+
+        public ICommand ExportJsonCommand { get; }
 
         public ObservableCollection<Book> Books { get; } = new();
 
@@ -36,12 +48,13 @@ namespace BookLibrary.Wpf.ViewModels
         public string PageInfo => $"Страница {_currentPage} из {_totalPages}";
 
 
-        // Команды
+        #region =======Команды
         public ICommand AddBookCommand { get; }
         public ICommand DeleteBookCommand { get; }
         public ICommand RefreshCommand { get; }
         public ICommand NextPageCommand { get; }
         public ICommand PrevPageCommand { get; }
+        #endregion
 
         public MainViewModel(BookLogic logic)
         {
@@ -53,12 +66,15 @@ namespace BookLibrary.Wpf.ViewModels
 
             NextPageCommand = new RelayCommand(_ => GoNextPage(), _ => _currentPage < _totalPages);
             PrevPageCommand = new RelayCommand(_ => GoPrevPage(), _ => _currentPage > 1);
-            
+
+            ExportJsonCommand = new RelayCommand(_ => ExportJson(), _ => Books.Any());
+
             LoadPage();
 
             LoadGenres();
         }
 
+        #region =======ПАГИНАЦИЯ
         private void LoadPage()
         {
             Books.Clear();
@@ -108,6 +124,9 @@ namespace BookLibrary.Wpf.ViewModels
             foreach (var b in _logic.GetAllBooks())
                 Books.Add(b);
         }
+#endregion
+
+        #region =======CRUID
 
         private bool CanAddBook()
         {
@@ -140,6 +159,40 @@ namespace BookLibrary.Wpf.ViewModels
 
             if (_logic.DeleteBook(SelectedBook.Id))
                 Books.Remove(SelectedBook);
+        }
+
+        #endregion
+
+        private void ExportJson()
+        {
+            var qqqq = new SaveFileDialog
+            {
+                Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*",
+                FileName = "books.json"
+            };
+
+            if (qqqq.ShowDialog() != true)
+                return;
+
+            var allBooks = _logic.GetAllBooks();
+
+            var exportObjects = allBooks.Select(b => new
+            {
+                Id = ExportId ? b.Id : (int?)null,
+                Title = ExportTitle ? b.Title : null,
+                Author = ExportAuthor ? b.Author : null,
+                Year = ExportYear ? (int?)b.Year : null,
+                Genre = ExportGenre ? b.Genre?.Name : null
+            });
+
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = HeyGoodLokin, // <---- хня для простой/сложный
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            };
+
+            var json = JsonSerializer.Serialize(exportObjects, options);
+            File.WriteAllText(qqqq.FileName, json);
         }
     }
 }
